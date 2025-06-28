@@ -2,6 +2,7 @@
 #define UTIL_H
 
 void clear();
-int no_of_days();
+typedef struct date date;
+int no_of_days(date d1, date d2);
 
 #endif

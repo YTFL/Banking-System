@@ -10,3 +10,6 @@ for account deletion:
 Input: Account number to be deleted
 Process: Copy all records except the one to delete into a temp file → overwrite original file
 Result: The account no longer exists in the system
+
+clear function notice:
+it clears the entire console screen and idk how to implement only clearing of few  specified lines
