@@ -1,0 +1,12 @@
+for accoount number:
+Uniqueness: Each account number must be unique within the bank.
+Format: The PDF suggests using a 10-digit numeric account number.
+Generation Logic:
+When a new account is created, the system should generate the next available account number by incrementing the highest existing account number by 1.
+For example, if the highest account number is 1000000005, the next account will be 1000000006.
+Starting Number: The PDF recommends starting from a base number, such as 1000000001.
+
+for account deletion:
+Input: Account number to be deleted
+Process: Copy all records except the one to delete into a temp file → overwrite original file
+Result: The account no longer exists in the system
