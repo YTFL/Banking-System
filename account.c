@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "structs.h"
+
 void new_account() {
 
 }
@@ -30,19 +34,43 @@ void close_account() {
 
 }
 
+// Returns 1 if account exists, 0 otherwise
 int found_account(int acc_no) {
-    if (acc_no == 1000000000) {
-        return 1;
+    FILE *fp = fopen("INITIAL.dat", "rb");
+    if (!fp) return 0;
+    initial acc;
+    while (fread(&acc, sizeof(acc), 1, fp)) {
+        if (acc.acc_no == acc_no) {
+            fclose(fp);
+            return 1;
+        }
     }
+    fclose(fp);
     return 0;
 }
 
-int last_accno() {
-    int acc_no = 1000000000, i = 0;
-    return acc_no + i;
+// Returns the last (highest) account number, or 1000000000 if no accounts exist
+long int last_accno() {
+    FILE *fp = fopen("INITIAL.dat", "rb");
+    if (!fp) return 1000000000;
+    initial acc;
+    long int last = 1000000000;
+    while (fread(&acc, sizeof(acc), 1, fp)) {
+        if (acc.acc_no > last) last = acc.acc_no;
+    }
+    fclose(fp);
+    return last;
 }
 
+// Returns the number of account records in the file
 int recordno() {
-    int rec_no = 0;
-    return rec_no;
+    FILE *fp = fopen("INITIAL.dat", "rb");
+    if (!fp) return 0;
+    int count = 0;
+    initial acc;
+    while (fread(&acc, sizeof(acc), 1, fp)) {
+        count++;
+    }
+    fclose(fp);
+    return count;
 }

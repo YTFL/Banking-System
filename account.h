@@ -10,6 +10,7 @@ void modify_account();
 void delete_account();
 void close_account();
 int found_account(int acc_no);
-int last_accno();
+long int last_accno();
+int recordno();
 
 #endif
