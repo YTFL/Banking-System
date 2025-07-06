@@ -22,7 +22,7 @@ void modify() {
 
 }
 
-void modify_account() {
+void modify_account(int choice) {
 
 }
 
@@ -34,7 +34,6 @@ void close_account() {
 
 }
 
-// Returns 1 if account exists, 0 otherwise
 int found_account(int acc_no) {
     FILE *fp = fopen("INITIAL.dat", "rb");
     if (!fp) return 0;
@@ -49,7 +48,7 @@ int found_account(int acc_no) {
     return 0;
 }
 
-// Returns the last (highest) account number, or 1000000000 if no accounts exist
+
 long int last_accno() {
     FILE *fp = fopen("INITIAL.dat", "rb");
     if (!fp) return 1000000000;
@@ -62,7 +61,7 @@ long int last_accno() {
     return last;
 }
 
-// Returns the number of account records in the file
+
 int recordno() {
     FILE *fp = fopen("INITIAL.dat", "rb");
     if (!fp) return 0;

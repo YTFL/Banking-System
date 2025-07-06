@@ -1,24 +1,39 @@
 #include <stdio.h>
+#include "account.h"
+#include "reports.h"
+#include "transactions.h"
 
 void main_menu () {
     int choice;
     do {
-        printf("Select an option:\n");
-        printf("Edit Menu\n");
+        printf("\n==== BANKING SYSTEM MAIN MENU ====\n");
+        printf("1. Open New Account\n");
+        printf("2. Display Account List\n");
+        printf("3. Reports\n");
+        printf("4. Edit Menu\n");
+        printf("5. Transactions\n");
+        printf("6. Delete Account\n");
+        printf("0. Exit\n");
+        printf("Select an option: ");
         scanf("%d", &choice);
         switch (choice) {
             case 1:
-                printf("Option 1 selected.\n");
+                new_account();
                 break;
             case 2:
-                printf("Option 2 selected.\n");
+                display_list();
                 break;
             case 3:
-                printf("Option 3 selected.\n");
+                month_report();
                 break;
             case 4:
-                printf("Edit Menu selected.\n");
                 edit_menu();
+                break;
+            case 5:
+                transaction();
+                break;
+            case 6:
+                delete_account();
                 break;
             case 0:
                 printf("Exiting menu.\n");
@@ -32,21 +47,16 @@ void main_menu () {
 void edit_menu() {
     int choice;
     do {
-        printf("Edit Menu:\n");
-        printf("1. Open New Account\n");
-        printf("2. Edit account details\n");
-        printf("3. Delete an account\n");
+        printf("\n==== EDIT MENU ====\n");
+        printf("1. Change Account Holder Name\n");
+        printf("2. Change Account Address\n");
         printf("0. Back to Main Menu\n");
+        printf("Select an option: ");
         scanf("%d", &choice);
         switch (choice) {
             case 1:
-                printf("New account opened\n");
-                break;
             case 2:
-                printf("Edit your account details\n");
-                break;
-            case 3:
-                printf("Enter account number to delete\n");
+                modify_account(choice);
                 break;
             case 0:
                 return;
