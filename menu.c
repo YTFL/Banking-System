@@ -16,6 +16,10 @@ void main_menu () {
             case 3:
                 printf("Option 3 selected.\n");
                 break;
+            case 4:
+                printf("Edit Menu selected.\n");
+                edit_menu();
+                break;
             case 0:
                 printf("Exiting menu.\n");
                 return;
