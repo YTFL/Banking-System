@@ -1,3 +1,6 @@
+## IMPORTANT NOTICE
+None of the implemented functions have been tested for working, it can all be tested only once other functions are implemented. The functions that are currently implemented can only be work only theortetically so don't bother testing the functions yet.
+
 for accoount number:
 Uniqueness: Each account number must be unique within the bank.
 Format: The PDF suggests using a 10-digit numeric account number.
@@ -13,3 +16,4 @@ Result: The account no longer exists in the system
 
 clear function notice:
 it clears the entire console screen and idk how to implement only clearing of few  specified lines
+this function must be added to all the menus so that the user can choose to clear the screen anytime required and once the screen is cleared, main menu is printed again, pretty much starting over, before the main menu is called, everything is returned first clearing the stack only keeping the function call for main menu preventing stack overflow

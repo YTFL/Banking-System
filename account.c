@@ -18,12 +18,52 @@ void display() {
 
 }
 
-void modify() {
-
+void modify(FILE *fp, long pos, initial *acc) {
+    fseek(fp, pos, SEEK_SET);
+    fwrite(acc, sizeof(initial), 1, fp);
+    printf("Account changes have been saved to the file.\n");
 }
 
 void modify_account(int choice) {
+    long int acc_no;
+    printf("Enter account number to modify: ");
+    scanf("%ld", &acc_no);
 
+    FILE *fp = fopen("INITIAL.dat", "rb+");
+    if (!fp) {
+        printf("Could not open file.\n");
+        return;
+    }
+    initial acc;
+    int found = 0;
+    long pos;
+    while (fread(&acc, sizeof(acc), 1, fp)) {
+        if (acc.acc_no == acc_no) {
+            found = 1;
+            pos = ftell(fp) - sizeof(acc);
+            break;
+        }
+    }
+    if (!found) {
+        printf("Account not found.\n");
+        fclose(fp);
+        return;
+    }
+    if (choice == 1) {
+        printf("Enter new name: ");
+        getchar();
+        fgets(acc.name, sizeof(acc.name), stdin);
+        acc.name[strcspn(acc.name, "\n")] = 0;
+        printf("Name updated successfully.\n");
+    } else if (choice == 2) {
+        printf("Enter new address: ");
+        getchar();
+        fgets(acc.address, sizeof(acc.address), stdin);
+        acc.address[strcspn(acc.address, "\n")] = 0;
+        printf("Address updated successfully.\n");
+    }
+    modify(fp, pos, &acc);
+    fclose(fp);
 }
 
 void delete_account() {
