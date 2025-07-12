@@ -7,10 +7,10 @@
 void new_account(void)
 {
      initial acc;
-     printf("-----Open New Account-----");
+     printf("\n-----Open New Account-----\n");
      acc.acc_no = last_accno() + 1;
     do {
-        printf("Enter Name: ");
+        printf("\nEnter Name: \n");
         fgets(acc.name,sizeof(acc.name),stdin);
         int len = strlen(acc.name);
         if (len > 0 && acc.name[len - 1] == '\n') {
@@ -19,7 +19,7 @@ void new_account(void)
     } while(strlen(acc.name) == 0);
    
     do {
-        printf("Enter Address : ");
+        printf("Enter Address : \n");
         fgets(acc.address,sizeof(acc.address),stdin);
         int len = strlen(acc.address);
         if(len > 0  && acc.address[len-1] == '\n') {
@@ -28,10 +28,10 @@ void new_account(void)
     } while(strlen(acc.address)==0);
   
     do {
-        printf("Enter Initial deposit (initial deposit must be >=500) : ");
+        printf("Enter Initial deposit (initial deposit must be >=500) : \n");
         scanf("%f",&acc.balance);
         if(acc.balance < 500) { 
-           printf("Initial deposit must be >=500");
+           printf("Initial deposit must be >=500\n");
         }
     } while(acc.balance< 500);
       while ((getchar()) != '\n');
