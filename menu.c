@@ -16,7 +16,11 @@ void main_menu(void) {
         printf("6. Delete Account\n");
         printf("0. Exit\n");
         printf("Select an option: ");
-        scanf("%d", &choice);
+        if (scanf("%d", &choice) != 1) {
+            printf("Invalid input. Please enter a number.\n");
+            while (getchar() != '\n');
+            continue;
+        }
         switch (choice) {
             case 1:
                 new_account();
@@ -39,8 +43,6 @@ void main_menu(void) {
             case 0:
                 printf("Exiting menu.\n");
                 return;
-            default:
-                printf("Invalid choice. Please try again.\n");
         }
     } while (choice != 0);
 }
