@@ -65,6 +65,8 @@ A file-based, menu-driven banking system project developed in C as part of an ac
 
 ---
 
- ## License
-This project is licensed under the [Creative Commons Attribution-NonCommercial 4.0 International License](https://creativecommons.org/licenses/by-nc/4.0/).
-It was developed as part of an academic requirement at **REVA University**, under the guidance of **Dr. Ramaprasad H C**, and is intended strictly for educational use only.
+ ## Usage
+This project was developed as part of an academic requirement at **REVA University**, under the guidance of **Dr. Ramaprasad H C**.
+It is provided strictly for **educational and learning purposes only**.
+Although it is publicly viewable (like many open-source projects), it is **not** licensed under MIT or any other open-source license.
+You are **not permitted** to copy, reuse, modify, distribute, or publish this project or its code for commercial, academic, or public use without explicit permission from the authors.
