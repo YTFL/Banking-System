@@ -21,6 +21,7 @@ void main_menu(void) {
             while (getchar() != '\n');
             continue;
         }
+        getchar();
         switch (choice) {
             case 1:
                 new_account();
