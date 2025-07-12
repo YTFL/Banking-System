@@ -1,0 +1,55 @@
+# Prerequisites
+*.d
+
+# Object files
+*.o
+
+# Linker output
+*.ilk
+*.map
+*.exp
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (including Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+*.dwo
+
+# Editor/IDE folders
+.vscode/
+.idea/
+*.user
+*.cbp
+*.dev
+
+# OS-specific junk
+.DS_Store
+Thumbs.db
+
+# Backup/Temp files
+*.log
+*.tmp
+*.bak
+*~
