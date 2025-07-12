@@ -67,6 +67,18 @@ void modify(FILE *fp, long pos, initial *acc) {
     printf("Account changes have been saved to the file.\n");
 }
 
+int found_account(FILE *fp, int acc_no) {
+    if (!fp) return 0;
+    initial acc;
+    rewind(fp);
+    while (fread(&acc, sizeof(acc), 1, fp)) {
+        if (acc.acc_no == acc_no) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 void modify_account(int choice) {
     long int acc_no;
     printf("Enter account number to modify: ");
@@ -77,20 +89,19 @@ void modify_account(int choice) {
         printf("Could not open file.\n");
         return;
     }
-    initial acc;
-    int found = 0;
-    long pos;
-    while (fread(&acc, sizeof(acc), 1, fp)) {
-        if (acc.acc_no == acc_no) {
-            found = 1;
-            pos = ftell(fp) - sizeof(acc);
-            break;
-        }
-    }
-    if (!found) {
+    if (!found_account(fp, acc_no)) {
         printf("Account not found.\n");
         fclose(fp);
         return;
+    }
+    rewind(fp);
+    initial acc;
+    long pos;
+    while (fread(&acc, sizeof(acc), 1, fp)) {
+        if (acc.acc_no == acc_no) {
+            pos = ftell(fp) - sizeof(acc);
+            break;
+        }
     }
     if (choice == 1) {
         printf("Enter new name: ");
@@ -116,21 +127,6 @@ void delete_account() {
 void close_account() {
 
 }
-
-int found_account(int acc_no) {
-    FILE *fp = fopen("INITIAL.dat", "rb");
-    if (!fp) return 0;
-    initial acc;
-    while (fread(&acc, sizeof(acc), 1, fp)) {
-        if (acc.acc_no == acc_no) {
-            fclose(fp);
-            return 1;
-        }
-    }
-    fclose(fp);
-    return 0;
-}
-
 
 long int last_accno() {
     FILE *fp = fopen("INITIAL.dat", "rb");
