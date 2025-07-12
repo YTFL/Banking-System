@@ -6,40 +6,37 @@ void new_account()
 {
      printf(“-----Open New Account-----“);
      initial.acc_no = last_acc() + 1;
-    do                                                                                                          
-     {
-          printf(“Enter Name : “);
-          fgets(initial.name,sizeof(initial.name),stdin);
-          int len = strlen(initial.name);
-           if (len > 0 && initial.name[len - 1] == '\n') 
-           {
-                  initial.name[len - 1] = '\0';
-             }
-     }while(strlen(initial.name) == 0);
-   do
-   {
-       printf(“Enter Address : “);
-       fgets(initial.address,sizeof(initial.address),stdin);
-       int len = strlen(initial.address);
-       if(len > 0  && initial.address[len – 1] == ‘\n’)
-       {
-          initial.address[len – 1] = ‘\0’;
-       } 
-   }while(strlen(initial.address)==0);
-  do
-  {
-    printf(“Enter Initial deposit (initial deposit must be >=500) : “);
-    scanf(“%f”,&initial.balance);
-    if(initial.balance < 500)
-   { 
+    do {
+        printf(“Enter Name: “);
+        fgets(initial.name,sizeof(initial.name),stdin);
+        int len = strlen(initial.name);
+        if (len > 0 && initial.name[len - 1] == '\n') {
+            initial.name[len - 1] = '\0';
+        }
+    } while(strlen(initial.name) == 0);
+   
+    do {
+        printf(“Enter Address : “);
+        fgets(initial.address,sizeof(initial.address),stdin);
+        int len = strlen(initial.address);
+        if(len > 0  && initial.address[len – 1] == ‘\n’) {
+            initial.address[len – 1] = ‘\0’;
+       }
+    } while(strlen(initial.address)==0);
+  
+    do {
+        printf(“Enter Initial deposit (initial deposit must be >=500) : “);
+        scanf(“%f”,&initial.balance);
+        if(initial.balance < 500) { 
            printf(“Initial deposit must be >=500”);
-   }
- }while(initial.balance< 500);
-add_to_file(initial);
+        }
+    } while(initial.balance< 500);
+    
+    add_to_file(initial);
 
-printf(“Account created successfully!\n”);
-printf(“Account Number : %d \n“,initial.acc_no);
-printf(“Balance : %.2f\n”,initial.balance);
+    printf(“Account created successfully!\n”);
+    printf(“Account Number : %d \n“,initial.acc_no);
+    printf(“Balance : %.2f\n”,initial.balance);
 }
 
 void add_to_file() {
