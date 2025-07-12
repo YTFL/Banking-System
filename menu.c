@@ -2,8 +2,9 @@
 #include "account.h"
 #include "reports.h"
 #include "transactions.h"
+#include "menu.h"
 
-void main_menu () {
+void main_menu(void) {
     int choice;
     do {
         printf("\n==== BANKING SYSTEM MAIN MENU ====\n");
@@ -30,7 +31,7 @@ void main_menu () {
                 edit_menu();
                 break;
             case 5:
-                transaction();
+                do_transaction();
                 break;
             case 6:
                 delete_account();
@@ -44,7 +45,7 @@ void main_menu () {
     } while (choice != 0);
 }
 
-void edit_menu() {
+void edit_menu(void) {
     int choice;
     do {
         printf("\n==== EDIT MENU ====\n");

@@ -2,8 +2,9 @@
 #include <stdio.h>
 #include "menu.h"
 
-int main( ) {
+int main() {
     main_menu();
     return 0;
 }
 
+//gcc main.c menu.c account.c reports.c transactions.c util.c -o main

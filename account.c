@@ -1,8 +1,10 @@
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include "structs.h"
+#include "account.h"
 
-void new_account() 
+void new_account(void)
 {
      initial acc;
      printf("-----Open New Account-----");
@@ -20,8 +22,8 @@ void new_account()
         printf("Enter Address : ");
         fgets(acc.address,sizeof(acc.address),stdin);
         int len = strlen(acc.address);
-        if(len > 0  && acc.address[len – 1] == '\n') {
-            acc.address[len – 1] = '\0';
+        if(len > 0  && acc.address[len-1] == '\n') {
+            acc.address[len - 1] = '\0';
        }
     } while(strlen(acc.address)==0);
   
@@ -48,8 +50,7 @@ void add_to_file(initial acc) {
         return;
    }
    fwrite(&acc, sizeof(acc), 1, fp);
-   fclose(fp);
-     
+   fclose(fp); 
 }
 
 void display_list() {
