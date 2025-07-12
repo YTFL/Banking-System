@@ -53,8 +53,32 @@ void add_to_file(initial acc) {
    fclose(fp); 
 }
 
-void display_list() {
-    
+void display_list() 
+{
+    FILE *fp = fopen("INITIAL.dat","rb");
+    if(fp == NULL)
+    {
+        printf("Cannot Open File\n");
+        return ;
+    }
+
+
+initial acc;
+double total_balance ;
+
+while (fread(&acc, sizeof(initial), 1, fp) == 1) {
+    printf("Account Number : %d\n", acc.acc_no);
+    printf("Name           : %s\n", acc.name);
+    printf("Address        : %s\n", acc.address);
+    printf("Balance        : %.2f\n", acc.balance);
+
+    total_balance += acc.balance;
+}
+
+printf("Total Balance : %.2f",total_balance);
+fclose(fp);
+}
+
 }
 
 void display() {
