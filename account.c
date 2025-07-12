@@ -4,43 +4,52 @@
 
 void new_account() 
 {
-     printf(“-----Open New Account-----“);
-     initial.acc_no = last_acc() + 1;
+     initial acc;
+     printf("-----Open New Account-----");
+     acc.acc_no = last_accno() + 1;
     do {
-        printf(“Enter Name: “);
-        fgets(initial.name,sizeof(initial.name),stdin);
-        int len = strlen(initial.name);
-        if (len > 0 && initial.name[len - 1] == '\n') {
-            initial.name[len - 1] = '\0';
+        printf("Enter Name: ");
+        fgets(acc.name,sizeof(acc.name),stdin);
+        int len = strlen(acc.name);
+        if (len > 0 && acc.name[len - 1] == '\n') {
+            acc.name[len - 1] = '\0';
         }
-    } while(strlen(initial.name) == 0);
+    } while(strlen(acc.name) == 0);
    
     do {
-        printf(“Enter Address : “);
-        fgets(initial.address,sizeof(initial.address),stdin);
-        int len = strlen(initial.address);
-        if(len > 0  && initial.address[len – 1] == ‘\n’) {
-            initial.address[len – 1] = ‘\0’;
+        printf("Enter Address : ");
+        fgets(acc.address,sizeof(acc.address),stdin);
+        int len = strlen(acc.address);
+        if(len > 0  && acc.address[len – 1] == '\n') {
+            acc.address[len – 1] = '\0';
        }
-    } while(strlen(initial.address)==0);
+    } while(strlen(acc.address)==0);
   
     do {
-        printf(“Enter Initial deposit (initial deposit must be >=500) : “);
-        scanf(“%f”,&initial.balance);
-        if(initial.balance < 500) { 
-           printf(“Initial deposit must be >=500”);
+        printf("Enter Initial deposit (initial deposit must be >=500) : ");
+        scanf("%f",&acc.balance);
+        if(acc.balance < 500) { 
+           printf("Initial deposit must be >=500");
         }
-    } while(initial.balance< 500);
+    } while(acc.balance< 500);
+      while ((getchar()) != '\n');
     
-    add_to_file(initial);
+    add_to_file(acc);
 
-    printf(“Account created successfully!\n”);
-    printf(“Account Number : %d \n“,initial.acc_no);
-    printf(“Balance : %.2f\n”,initial.balance);
+    printf("Account created successfully!\n");
+    printf("Account Number : %ld \n",acc.acc_no);
+    printf("Balance : %.2f\n",acc.balance);
 }
 
-void add_to_file() {
-
+void add_to_file(initial acc) {
+   FILE *fp = fopen("INITIAL.dat","ab");
+   if(fp == NULL){
+        printf("Could not open file.\n");
+        return;
+   }
+   fwrite(&acc, sizeof(acc), 1, fp);
+   fclose(fp);
+     
 }
 
 void display_list() {
