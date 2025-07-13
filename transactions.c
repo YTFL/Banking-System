@@ -133,7 +133,7 @@ void transaction()
 
 void update_balance(initial acc) 
 {
-    FILE *fp = fopen("INITIAL.dat", "rb+");  // ✅ open for read + write
+    FILE *fp = fopen("INITIAL.dat", "rb+");  
     if (fp == NULL) {
         printf("Error opening INITIAL.dat\n");
         return;
@@ -158,7 +158,7 @@ void update_balance(initial acc)
                 return;
             }
 
-            fflush(fp);  // 🔥 forces buffer to disk
+            fflush(fp);  //  forces buffer to disk
             break;
         }
     }
