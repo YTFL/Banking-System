@@ -225,7 +225,6 @@ void delete_account()
 
 
 void close_account() {
-
 }
 
 long int last_accno() {
