@@ -3,8 +3,8 @@
 
 typedef struct {
     long int acc_no;
-    char name[20];
-    char address[50];
+    char name[21];     // 20 characters + 1 for '\0'
+    char address[51];  // 50 characters + 1 for '\0'
     float balance;
 } initial;
 
