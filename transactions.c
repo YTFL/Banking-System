@@ -142,6 +142,7 @@ void update_balance(initial acc)
     initial temp;
     while (fread(&temp, sizeof(temp), 1, fp)) 
     {
+        printf("Updating account %ld in file.\n", acc.acc_no);
         if (temp.acc_no == acc.acc_no)
         {
             fseek(fp, -sizeof(temp), SEEK_CUR);
