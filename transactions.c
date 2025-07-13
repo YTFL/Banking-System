@@ -3,6 +3,10 @@
 #include<string.h>
 #include "structs.h"
 
+void update_balance(initial acc);
+void add_to_file_transaction(banking trans);
+float give_balance(long int acc_no);
+
 void transaction()
 {
     FILE *fp_initial, *fp_banking;
@@ -104,7 +108,7 @@ void update_balance(initial acc) {
 }
 
 
-float give_balance(int acc_no) {
+float give_balance(long int acc_no) {
     float balance = 0.0;
     FILE *fp = fopen("INITIAL.dat", "rb");
     if (fp == NULL) {
