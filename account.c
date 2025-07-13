@@ -64,10 +64,10 @@ void display_list()
 
 
 initial acc;
-double total_balance ;
+double total_balance = 0 ;
 
 while (fread(&acc, sizeof(initial), 1, fp) == 1) {
-    printf("Account Number : %d\n", acc.acc_no);
+    printf("Account Number : %ld\n", acc.acc_no);
     printf("Name           : %s\n", acc.name);
     printf("Address        : %s\n", acc.address);
     printf("Balance        : %.2f\n", acc.balance);
