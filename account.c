@@ -17,7 +17,7 @@ void new_account(void)
             acc.name[len - 1] = '\0';
         }
     } while(strlen(acc.name) == 0);
-    printf('\n');
+    printf("\n");
      
     do {
         printf("Enter Address : ");
@@ -27,7 +27,7 @@ void new_account(void)
             acc.address[len - 1] = '\0';
        }
     } while(strlen(acc.address)==0);
-    printf('\n');
+    printf("\n");
     do {
         printf("Enter Initial deposit (initial deposit must be >=500) : ");
         scanf("%f",&acc.balance);
