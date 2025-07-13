@@ -7,4 +7,4 @@ int main() {
     return 0;
 }
 
-//gcc main.c menu.c account.c reports.c transactions.c util.c -o main
+//gcc main.c menu.c account.c reports.c transactions.c util.c -o banking_system -lm
