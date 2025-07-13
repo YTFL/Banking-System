@@ -9,6 +9,13 @@ typedef struct {
 } initial;
 
 typedef struct {
+    long int acc_no;
+    char date[20];
+    char type[10];   
+    float amount;
+} transaction;
+
+typedef struct {
     int day;
     int month;
     int year;
