@@ -221,10 +221,11 @@ void delete_account()
    remove("INITIAL.dat");
    rename("temp.dat","INITIAL.dat");
    printf("Account deleted successfully .\n");
+   close_account();
 }
 
 
-void close_account(long int acc_no)
+void close_account()
 {
     FILE *fp = fopen("BANKING.dat","rb");
     if(fp == NULL)
@@ -239,6 +240,20 @@ void close_account(long int acc_no)
         fclose(fp);
         return;
     }
+    banking ban;
+    while(fread(&ban, sizeof(ban) , 1 , fp))
+     {
+          if(ban.acc_no == acc_no)
+          {
+              continue;
+          }
+          fwrite(&ban, sizeof(ban), 1, temp);
+     }
+    fclose(fp);
+    fclose(temp);
+    remove("BANKING.dat");
+    rename("temp.dat","BANKING.dat");
+    printf("Transactions deleted successfully");
     
 }
 
