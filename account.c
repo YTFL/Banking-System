@@ -4,11 +4,10 @@
 #include "structs.h"
 #include "account.h"
 
-void new_account(void)
-{
-     initial acc;
-     printf("\n-----Open New Account-----\n");
-     acc.acc_no = last_accno() + 1;
+void new_account(void) {
+    initial acc;
+    printf("\n-----Open New Account-----\n");
+    acc.acc_no = last_accno() + 1;
     do {
         printf("\nEnter Name: ");
         fgets(acc.name,sizeof(acc.name),stdin);
@@ -28,6 +27,7 @@ void new_account(void)
        }
     } while(strlen(acc.address)==0);
     printf("\n");
+    
     do {
         printf("Enter Initial deposit (initial deposit must be >=500) : ");
         scanf("%f",&acc.balance);
@@ -35,8 +35,8 @@ void new_account(void)
            printf("Initial deposit must be >=500\n");
         }
     } while(acc.balance< 500);
-      while ((getchar()) != '\n');
     
+    while ((getchar()) != '\n');
     add_to_file(acc);
 
     printf("Account created successfully!\n");
@@ -54,8 +54,7 @@ void add_to_file(initial acc) {
    fclose(fp); 
 }
 
-void display_list()
-{
+void display_list() {
     FILE *fp = fopen("INITIAL.dat","rb");
     if(fp == NULL)
     {
@@ -67,57 +66,47 @@ void display_list()
     initial acc;
     double total_balance = 0 ;
 
-    printf("%-20s %-20s %-40s %-20s\n" , "Account Number" , "Name" , "Address" , "Balance");
-    printf("+================+========================+================================================+=====================+\n");
+    printf("+====================+========================+======================================================+=====================+\n");
+    printf("| %-18s | %-22s | %-52s | %-19s |\n", "Account Number", "Name", "Address", "Balance");
+    printf("+====================+========================+======================================================+=====================+\n");
 
-    while (fread(&acc, sizeof(initial), 1, fp) == 1)
-   {
-       printf("| %-12ld | %-20s | %-50s | %17.2f |\n", acc.acc_no, acc.name, acc.address, acc.balance);
-
+    while (fread(&acc, sizeof(initial), 1, fp) == 1) {
+        printf("| %-18ld | %-22s | %-52s | %19.2f |\n", acc.acc_no, acc.name, acc.address, acc.balance);
+        printf("+--------------------+------------------------+------------------------------------------------------+---------------------+\n");
         total_balance += acc.balance;
     }
-     
-    printf("+----------------+------------------------+------------------------------------------------+---------------------+\n");
-    printf("| %40s | %50.2f |\n", "Total Balance in Bank:", total_balance);
-    printf("+----------------+------------------------+------------------------------------------------+---------------------+\n");
+
+    printf("| %-18s | %-22s | %-52s | %19.2f |\n", "", "", "Total Balance in Bank:", total_balance);
+    printf("+--------------------+------------------------+------------------------------------------------------+---------------------+\n");
 
     fclose(fp);
 }
 
 
 
-void display() 
-{
-  long int acc_no;
-  FILE *fp = fopen("INITIAL.dat","rb");
-  if(fp == NULL)
-  {
-       printf("Cannot open file");
-       return;
-  }
-  initial acc;
-  while (1) 
-  {
+void display() {
+    long int acc_no;
+    FILE *fp = fopen("INITIAL.dat","rb");
+    if(fp == NULL) {
+        printf("Cannot open file");
+        return;
+    }
+    initial acc;
+    while (1) {
         printf("Enter account number : ");
         scanf("%ld", &acc_no);
         while ((getchar()) != '\n'); 
-        if (found_account(fp, acc_no))
-        {
-            break;  
-        }
-        else
-        {
+        if (found_account(fp, acc_no)) {
+            break;
+        } else {
             printf(" Account not found please try again.\n");
-            rewind(fp);  
-             
+            rewind(fp); 
         }
     }
     rewind(fp);
      
-    while (fread(&acc, sizeof(acc), 1, fp))
-    {
-        if (acc.acc_no == acc_no)
-        {
+    while (fread(&acc, sizeof(acc), 1, fp)) {
+        if (acc.acc_no == acc_no) {
             printf("\n+------------------------ ACCOUNT DETAILS ------------------------+\n");
             printf("Account Number : %ld\n", acc.acc_no);
             printf("Name           : %s\n", acc.name);
@@ -127,7 +116,7 @@ void display()
         }
     }
   
-  fclose(fp);  
+    fclose(fp);  
 }
   
 
