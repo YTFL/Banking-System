@@ -3,10 +3,7 @@
 #include<string.h>
 #include <time.h>
 #include "structs.h"
-
-void update_balance(initial acc);
-void add_to_file_transaction(banking trans);
-float give_balance(long int acc_no);
+#include "transactions.h"
 
 void transaction()
 {
