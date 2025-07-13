@@ -54,7 +54,8 @@ void add_to_file(initial acc) {
    fclose(fp); 
 }
 
-void display_list() {
+void display_list()
+{
     FILE *fp = fopen("INITIAL.dat","rb");
     if(fp == NULL)
     {
@@ -125,7 +126,7 @@ void display()
             break;
         }
     }
-
+  rewind(fp);
   fclose(fp);  
 }
   
