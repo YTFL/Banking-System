@@ -36,7 +36,7 @@ void main_menu(void) {
                 edit_menu();
                 break;
             case 5:
-                do_transaction();
+                transaction();
                 break;
             case 6:
                 delete_account();
