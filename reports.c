@@ -14,7 +14,7 @@ void display_account()
     scanf("%ld", &accno);
 
     // Open account file for found_account()
-    FILE *fp = fopen("initial.dat", "rb");
+    FILE *fp = fopen("INITIAL.dat", "rb");
     if (!fp) {
         printf("\n\tERROR!\nCannot open account file!\n");
         return;
@@ -55,14 +55,28 @@ void display_account()
 
     banking t; 
     float total_deposit = 0, total_withdraw = 0;
+    float opening_balance = 0;
     int transaction_count = 0;
+    int found_initial = 0;
 
-    printf("%-10s  %-10s  %10s  %10s  %10s\n",
-           "Date", "Particular", "Deposit", "Withdraw", "Balance");
-    printf("------------------------------------------------------------\n");
+    // Find initial balance
+    rewind(bank_fp);
+    while (fread(&t, sizeof(banking), 1, bank_fp))
+    {
+        if (t.acc_no == accno && strcmp(t.trans, "Initial") == 0) {
+            opening_balance = t.amount;
+            found_initial = 1;
+            break;
+        }
+    }
+    rewind(bank_fp);
 
-    // Read banking structs
-    while (fread(&t, sizeof(banking), 1, bank_fp))  // Changed to banking
+    // Print opening balance
+    printf("%02d-%02d-%04d  %-10s  %10.2f  %10s  %10.2f\n", 
+           1, 1, 1900, "Opening", opening_balance, "", opening_balance);
+
+    // Process transactions
+    while (fread(&t, sizeof(banking), 1, bank_fp))
     {
         if (t.acc_no == accno)
         {
@@ -85,21 +99,23 @@ void display_account()
         }
     }
     fclose(bank_fp);
-    fclose(fp);  // Close account file
+    fclose(fp);
 
     if (transaction_count == 0)
     {
         printf("\tNo transactions found for this account!\n");
     }
 
+    float closing_balance = opening_balance + total_deposit - total_withdraw;
+    
     printf("------------------------------------------------------------\n");
     printf("TOTAL -> %10.2f  %10.2f  %10.2f\n\n",
-           total_deposit, total_withdraw, total_deposit - total_withdraw);
+           total_deposit, total_withdraw, closing_balance);
 }
 
 void month_report()
 {
-    //clear();
+    clear();
     long int accno;
     printf("Enter account number: ");
     scanf("%ld", &accno);
@@ -146,6 +162,7 @@ void month_report()
     printf("%s\n", name);
     printf("Date: %02d/%02d/%d\n\n", today.day, today.month, today.year);
 
+    // Only call this once - removed duplicate header
     box_for_display();
 
     // Read banking transactions
@@ -157,33 +174,29 @@ void month_report()
         return;
     }
 
-    banking t;  // Changed to banking struct
+    banking t;
     float total_deposit = 0, total_withdraw = 0;
     float opening_balance = 0, closing_balance = 0;
+    int found_initial = 0;
 
-    printf("%-10s  %-10s  %10s  %10s  %10s\n",
-           "Date", "Particular", "Deposit", "Withdraw", "Balance");
-    printf("------------------------------------------------------------\n");
-
-    // Find opening balance (last balance from previous month)
-    while (fread(&t, sizeof(banking), 1, bank_fp))  // Changed to banking
+    // Find initial balance
+    rewind(bank_fp);
+    while (fread(&t, sizeof(banking), 1, bank_fp))
     {
-        if (t.acc_no == accno)
-        {
-            if (t.date.year < year || (t.date.year == year && t.date.month < month))
-            {
-                opening_balance = t.balance;
-            }
+        if (t.acc_no == accno && strcmp(t.trans, "Initial") == 0) {
+            opening_balance = t.amount;
+            found_initial = 1;
+            break;
         }
     }
     rewind(bank_fp);
 
     // Print opening balance
-    printf("%02d-%02d-%04d  %-10s  %10s  %10s  %10.2f\n",
-           1, month, year, "Opening", "", "", opening_balance);
+    printf("%02d-%02d-%04d  %-10s  %10.2f  %10s  %10.2f\n",
+           1, month, year, "Opening", opening_balance, "", opening_balance);
 
     // Process monthly transactions
-    while (fread(&t, sizeof(banking), 1, bank_fp))  // Changed to banking
+    while (fread(&t, sizeof(banking), 1, bank_fp))
     {
         if (t.acc_no == accno && t.date.month == month && t.date.year == year)
         {
@@ -206,7 +219,12 @@ void month_report()
         }
     }
     fclose(bank_fp);
-    fclose(fp);  // Close account file
+    fclose(fp);
+
+    // Calculate closing balance if not set
+    if (closing_balance == 0) {
+        closing_balance = opening_balance + total_deposit - total_withdraw;
+    }
 
     printf("------------------------------------------------------------\n");
     printf("TOTAL FOR MONTH: %10.2f  %10.2f\n", total_deposit, total_withdraw);
@@ -216,7 +234,7 @@ void month_report()
 void box_for_display()
 {
     printf("------------------------------------------------------------\n");
-    printf("%-10s  %-10s  %10s  %10s  %10s\n",
+    printf("%-12s  %-10s  %10s  %10s  %10s\n",
            "Date", "Particular", "Deposit", "Withdraw", "Balance");
     printf("------------------------------------------------------------\n");
 }
