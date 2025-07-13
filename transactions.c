@@ -52,6 +52,14 @@ void transaction()
     printf("Enter transaction amount: ");
     scanf("%f", &trans.amount);
 
+    // Fill the date into transaction
+    
+    time_t now = time(NULL);
+    struct tm *local = localtime(&now);
+    trans.date.day = local->tm_mday;
+    trans.date.month = local->tm_mon + 1;
+    trans.date.year = local->tm_year + 1900;
+
     trans.acc_no = acc.acc_no;
     trans.interest = 0;
 
