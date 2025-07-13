@@ -219,7 +219,7 @@ void delete_account()
    fclose(fp);
    fclose(temp);
    remove("INITIAL.dat");
-   rename("TEMP.dat","INITIAL.dat");
+   rename("temp.dat","INITIAL.dat");
    printf("Account deleted successfully .\n");
 }
 
