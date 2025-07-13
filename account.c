@@ -224,7 +224,21 @@ void delete_account()
 }
 
 
-void close_account() {
+void close_account(long int acc_no)
+{
+    FILE *fp = fopen("BANKING.dat","rb");
+    if(fp == NULL)
+    {
+        printf("Cannot open file");
+        return;
+    }
+    FILE *temp = fopen("temp.dat","wb");
+    if(temp == NULL)
+    {
+        printf("Cannot open file");
+        fclose(fp);
+        return;
+    }
 }
 
 long int last_accno() {
