@@ -53,7 +53,10 @@ A file-based, menu-driven banking system project developed in C as part of an ac
 - Console clearing: `system("cls")` (Windows only)
 
 ---
-> To build and use the project use ```gcc main.c menu.c account.c reports.c transactions.c util.c -o banking_system -lm```
+ To build and use the project use:
+ ```bash
+ gcc main.c menu.c account.c reports.c transactions.c util.c -o banking_system -lm
+```
 ---
 
 ## Project Notes
