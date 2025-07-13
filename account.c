@@ -89,10 +89,6 @@ void new_account(void)
 // -------------------------
 void modify_account(int choice) 
 {
-    long int acc_no;
-    printf("Enter account number to modify: ");
-    scanf("%ld", &acc_no);
-    while ((getchar()) != '\n');
 
     FILE *fp = fopen("INITIAL.dat", "rb+");
     if (!fp) {
@@ -100,12 +96,32 @@ void modify_account(int choice)
         return;
     }
 
-    if (!found_account(fp, acc_no)) {
-        printf("Account not found.\n");
-        fclose(fp);
-        return;
+    long int acc_no;
+
+while (1) {
+    printf("Enter account number you want to modify: ");
+    
+    if (scanf("%ld", &acc_no) != 1)
+    {
+        printf("Invalid input. Please re-enter account number.\n");
+        while ((getchar()) != '\n');  
+        continue;
     }
 
+    while ((getchar()) != '\n'); 
+
+    if (!found_account(fp, acc_no))
+    {
+        printf("Account not found. Please try again.\n");
+        rewind(fp); 
+    } else 
+    {
+        break; 
+    }
+}
+
+
+   
     rewind(fp);
     initial acc;
     long pos = -1;
@@ -124,8 +140,10 @@ void modify_account(int choice)
             int len = strlen(acc.name);
             if (len > 0 && acc.name[len - 1] == '\n') {
                 acc.name[len - 1] = '\0';
-            } else {
-                while ((getchar()) != '\n');
+            } else
+            {
+                 int ch;
+                  while ((ch = getchar()) != '\n' && ch != EOF);
             }
 
             if (strlen(acc.name) == 0) {
@@ -152,8 +170,10 @@ void modify_account(int choice)
             int len = strlen(acc.address);
             if (len > 0 && acc.address[len - 1] == '\n') {
                 acc.address[len - 1] = '\0';
-            } else {
-                while ((getchar()) != '\n');
+            } else
+            {
+               int ch;
+               while ((ch = getchar()) != '\n' && ch != EOF);
             }
 
             if (strlen(acc.address) == 0) {
