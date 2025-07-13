@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include <time.h>
 #include "structs.h"
 
 void update_balance(initial acc);
