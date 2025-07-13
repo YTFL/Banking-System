@@ -112,7 +112,7 @@ void display()
              
         }
     }
-
+    rewind(fp);
      
     while (fread(&acc, sizeof(acc), 1, fp))
     {
@@ -126,7 +126,7 @@ void display()
             break;
         }
     }
-  rewind(fp);
+  
   fclose(fp);  
 }
   
