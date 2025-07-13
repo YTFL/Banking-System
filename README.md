@@ -19,7 +19,7 @@ A file-based, menu-driven banking system project developed in C as part of an ac
 
 ## Team Members
 
-- [**Venkat Piyush D**](https://github.com/YTFL) *(Team Lead)*
+- [**Venkat Piyush**](https://github.com/YTFL) *(Team Lead)*
 - [**Varsha TM**](https://github.com/varsha2006147)
 - [**Zainab Siddiqua**](https://github.com/Zainab-Siddiqua)
 - [**Vijeta Nadgir**](https://github.com/vanilla2409)
