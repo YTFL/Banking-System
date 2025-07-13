@@ -13,7 +13,7 @@ void main_menu(void) {
         printf("3. Reports\n");
         printf("4. Edit Menu\n");
         printf("5. Transactions\n");
-        printf("6. Delete Account\n");
+        printf("6. Display Account Details\n");
         printf("0. Exit\n");
         printf("Select an option: ");
         if (scanf("%d", &choice) != 1) {
@@ -39,7 +39,7 @@ void main_menu(void) {
                 transaction();
                 break;
             case 6:
-                delete_account();
+                display();
                 break;
             case 0:
                 printf("Exiting menu.\n");
@@ -57,6 +57,7 @@ void edit_menu(void) {
         printf("\n==== EDIT MENU ====\n");
         printf("1. Change Account Holder Name\n");
         printf("2. Change Account Address\n");
+        printf("3. Delte Account\n");
         printf("0. Back to Main Menu\n");
         printf("Select an option: ");
         scanf("%d", &choice);
@@ -65,6 +66,8 @@ void edit_menu(void) {
             case 2:
                 modify_account(choice);
                 break;
+            case 3:
+                delete_account();
             case 0:
                 return;
             default:
