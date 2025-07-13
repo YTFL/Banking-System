@@ -4,6 +4,7 @@
 #include <time.h>
 #include "structs.h"
 #include "transactions.h"
+#include "account.h"
 
 
 
@@ -12,7 +13,7 @@ void transaction()
     FILE *fp_initial, *fp_banking;
     initial acc;
     banking trans;
-    int flag = 0;
+
 
     long int acc_no;
     printf("enter account number\n");
@@ -31,18 +32,22 @@ void transaction()
 
     // reads the accounts and finds the one
 
-    while (fread(&acc, sizeof(acc), 1, fp_initial)) {
-        if (acc.acc_no == acc_no) {
-            flag = 1;
+    if (!found_account(fp_initial, acc_no)) 
+    {
+        printf("Account not found.\n");
+        fclose(fp_initial);
+        return;
+    }
+    rewind(fp_initial);
+    while (fread(&acc, sizeof(acc), 1, fp_initial))
+    {
+        if (acc.acc_no == acc_no) 
+        {
             break;
         }
     }
     
-    if(flag ==  0) {
-        printf("account not found. \n");
-        fclose(fp_initial);
-        return;
-    }
+
 
     printf("Account holder: %s\n", acc.name);
     printf("Current balance: %f\n", acc.balance);
