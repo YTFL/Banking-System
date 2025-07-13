@@ -2,11 +2,10 @@
 #include<stdlib.h>
 #include<string.h>
 #include <time.h>
+#include <ctype.h>
 #include "structs.h"
 #include "transactions.h"
 #include "account.h"
-
-
 
 void transaction()
 {
@@ -16,19 +15,22 @@ void transaction()
 
     long int acc_no;
 
-    // keep asking for a valid account number until found
-    while (1) {
+    // keep asking for valid account number
+    while (1) 
+    {
         printf("Enter account number: ");
         scanf("%ld", &acc_no);
-        while (getchar() != '\n'); // flush buffer
+        while (getchar() != '\n');
 
         fp_initial = fopen("INITIAL.dat", "rb");
-        if (fp_initial == NULL) {
+        if (fp_initial == NULL) 
+        {
             printf("Error opening account file.\n");
             return;
         }
 
-        if (!found_account(fp_initial, acc_no)) {
+        if (!found_account(fp_initial, acc_no))
+        {
             printf("Account not found. Please try again.\n");
             fclose(fp_initial);
             continue;
@@ -36,14 +38,16 @@ void transaction()
 
         // load the account details
         rewind(fp_initial);
-        while (fread(&acc, sizeof(acc), 1, fp_initial)) {
-            if (acc.acc_no == acc_no) {
+        while (fread(&acc, sizeof(acc), 1, fp_initial))
+        {
+            if (acc.acc_no == acc_no)
+            {
                 break;
             }
         }
 
         fclose(fp_initial);
-        break; // found and loaded account, exit loop
+        break; 
     }
 
     printf("Account holder: %s\n", acc.name);
@@ -55,47 +59,47 @@ void transaction()
         scanf("%s", trans.trans);
         while (getchar() != '\n');
 
-        if (strcmp(trans.trans, "Withdraw") == 0 || strcmp(trans.trans, "withdraw") == 0 ||strcmp(trans.trans, "Deposit") == 0 || strcmp(trans.trans, "deposit") == 0) 
-        {
+        for (int i = 0; trans.trans[i]; i++)
+            trans.trans[i] = tolower(trans.trans[i]);
+
+        if (strcmp(trans.trans, "withdraw") == 0 || strcmp(trans.trans, "deposit") == 0)
             break;
-        }
+
         printf("Invalid transaction type. Please enter 'Deposit' or 'Withdraw'.\n");
     }
 
     // mode loop
-    while (1) 
-    {
+    while (1) {
         printf("Enter mode (cash / cheque): ");
         scanf("%s", trans.type);
         while (getchar() != '\n');
 
+        for (int i = 0; trans.type[i]; i++)
+            trans.type[i] = tolower(trans.type[i]);
+
         if (strcmp(trans.type, "cash") == 0 || strcmp(trans.type, "cheque") == 0)
-        {
             break;
-        }
+
         printf("Invalid mode. Please enter 'cash' or 'cheque'.\n");
     }
 
-    // transaction amount loop
-    while (1) 
-    {
+    // amount loop
+    while (1) {
         printf("Enter transaction amount: ");
-        if (scanf("%f", &trans.amount) != 1) 
-        {
+        if (scanf("%f", &trans.amount) != 1) {
             printf("Invalid input. Please enter a valid number.\n");
             while (getchar() != '\n');
             continue;
         }
         while (getchar() != '\n');
 
-        if (trans.amount > 0) 
-        {
+        if (trans.amount > 0)
             break;
-        }
+
         printf("Transaction amount must be greater than zero.\n");
     }
 
-    // Fill date
+    // fill date
     time_t now = time(NULL);
     struct tm *local = localtime(&now);
     trans.date.day = local->tm_mday;
@@ -105,34 +109,27 @@ void transaction()
     trans.acc_no = acc.acc_no;
     trans.interest = 0;
 
-    // Process
-    if (strcmp(trans.trans, "Withdraw") == 0 || strcmp(trans.trans, "withdraw") == 0) 
-    {
-        if (acc.balance <= 500) 
-        {
+    // process
+    if (strcmp(trans.trans, "withdraw") == 0) {
+        if (acc.balance <= 500) {
             printf("Transaction rejected. Account balance is already at or below the minimum required balance of 500.\n");
             return;
         }
-        if (trans.amount > acc.balance)
-        {
+        if (trans.amount > acc.balance) {
             printf("Insufficient balance.\n");
             return;
         }
         acc.balance -= trans.amount;
-    } 
-    else if (strcmp(trans.trans, "Deposit") == 0 || strcmp(trans.trans, "deposit") == 0) 
-    {
+    } else if (strcmp(trans.trans, "deposit") == 0) {
         acc.balance += trans.amount;
     }
 
     trans.balance = acc.balance;
-    update_balance(acc); 
+    update_balance(acc);
     add_to_file_transaction(trans);
 
     printf("Transaction successful. Updated balance: %.2f\n", acc.balance);
 }
-
-
 
 void update_balance(initial acc) 
 {
