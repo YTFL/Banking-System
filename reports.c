@@ -14,7 +14,7 @@ void display_account()
     scanf("%ld", &accno);
 
     // Open account file for found_account()
-    FILE *fp = fopen("INITIAL.dat", "rb");
+    FILE *fp = fopen("initial.dat", "rb");
     if (!fp) {
         printf("\n\tERROR!\nCannot open account file!\n");
         return;
