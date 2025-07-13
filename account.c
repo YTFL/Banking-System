@@ -212,7 +212,8 @@ void delete_account()
     {
        if(acc.acc_no == acc_no)
        {
-           continue;
+           continue
+               
        }
         fwrite(&acc, sizeof(acc), 1 , temp);
    }
