@@ -4,45 +4,84 @@
 #include "structs.h"
 #include "account.h"
 
-void new_account(void) {
+void new_account(void) 
+{
     initial acc;
-    printf("\n-----Open New Account-----\n");
+    printf("\n----- Open New Account -----\n");
     acc.acc_no = last_accno() + 1;
+
+    // Take name
     do {
-        printf("\nEnter Name: ");
-        fgets(acc.name,sizeof(acc.name),stdin);
+        printf("\nEnter Name (max 20 characters): ");
+        fgets(acc.name, sizeof(acc.name), stdin);
         int len = strlen(acc.name);
         if (len > 0 && acc.name[len - 1] == '\n') {
             acc.name[len - 1] = '\0';
         }
-    } while(strlen(acc.name) == 0);
-    printf("\n");
-     
-    do {
-        printf("Enter Address : ");
-        fgets(acc.address,sizeof(acc.address),stdin);
-        int len = strlen(acc.address);
-        if(len > 0  && acc.address[len-1] == '\n') {
-            acc.address[len - 1] = '\0';
-       }
-    } while(strlen(acc.address)==0);
-    printf("\n");
-    
-    do {
-        printf("Enter Initial deposit (initial deposit must be >=500) : ");
-        scanf("%f",&acc.balance);
-        if(acc.balance < 500) { 
-           printf("Initial deposit must be >=500\n");
+
+        if (strlen(acc.name) == 0) {
+            printf("Name cannot be empty.\n");
+            continue;
         }
-    } while(acc.balance< 500);
-    
-    while ((getchar()) != '\n');
+
+        if (strlen(acc.name) > 20) {
+            printf("WARNING: Name is longer than 20 characters and will be truncated.\n");
+            printf("Do you want to continue with truncated name? (Y/N): ");
+            char ch = getchar();
+            while ((getchar()) != '\n'); // clear input
+            if (ch != 'Y' && ch != 'y') {
+                continue;
+            }
+            acc.name[20] = '\0'; // truncate
+        }
+        break;
+    } while(1);
+
+    // Take address
+    do {
+        printf("\nEnter Address (max 50 characters): ");
+        fgets(acc.address, sizeof(acc.address), stdin);
+        int len = strlen(acc.address);
+        if (len > 0 && acc.address[len - 1] == '\n') {
+            acc.address[len - 1] = '\0';
+        }
+
+        if (strlen(acc.address) == 0) {
+            printf("Address cannot be empty.\n");
+            continue;
+        }
+
+        if (strlen(acc.address) > 50) {
+            printf("WARNING: Address is longer than 50 characters and will be truncated.\n");
+            printf("Do you want to continue with truncated address? (Y/N): ");
+            char ch = getchar();
+            while ((getchar()) != '\n');
+            if (ch != 'Y' && ch != 'y') {
+                continue;
+            }
+            acc.address[50] = '\0'; // truncate
+        }
+        break;
+    } while(1);
+
+    // Take initial deposit
+    do {
+        printf("\nEnter Initial deposit (>=500): ");
+        scanf("%f", &acc.balance);
+        if (acc.balance < 500) { 
+            printf("Initial deposit must be >=500\n");
+        }
+    } while(acc.balance < 500);
+
+    while ((getchar()) != '\n'); // clear leftover input
+
     add_to_file(acc);
 
-    printf("Account created successfully!\n");
-    printf("Account Number : %ld \n",acc.acc_no);
-    printf("Balance : %.2f\n",acc.balance);
+    printf("\nAccount created successfully!\n");
+    printf("Account Number : %ld\n", acc.acc_no);
+    printf("Balance        : %.2f\n", acc.balance);
 }
+
 
 void add_to_file(initial acc) {
    FILE *fp = fopen("INITIAL.dat","ab");
@@ -138,46 +177,106 @@ int found_account(FILE *fp, int acc_no) {
     return 0;
 }
 
-void modify_account(int choice) {
+void modify_account(int choice) 
+{
     long int acc_no;
     printf("Enter account number to modify: ");
     scanf("%ld", &acc_no);
+    while ((getchar()) != '\n'); // clear buffer
 
     FILE *fp = fopen("INITIAL.dat", "rb+");
     if (!fp) {
         printf("Could not open file.\n");
         return;
     }
+
     if (!found_account(fp, acc_no)) {
         printf("Account not found.\n");
         fclose(fp);
         return;
     }
+
     rewind(fp);
     initial acc;
-    long pos;
+    long pos = -1;
     while (fread(&acc, sizeof(acc), 1, fp)) {
         if (acc.acc_no == acc_no) {
             pos = ftell(fp) - sizeof(acc);
             break;
         }
     }
+
+    if (pos == -1) {
+        printf("Error locating account in file.\n");
+        fclose(fp);
+        return;
+    }
+
     if (choice == 1) {
-        printf("Enter new name: ");
-        getchar();
-        fgets(acc.name, sizeof(acc.name), stdin);
-        acc.name[strcspn(acc.name, "\n")] = 0;
+        // Modify name
+        do {
+            printf("Enter new name (max 20 characters): ");
+            fgets(acc.name, sizeof(acc.name), stdin);
+            int len = strlen(acc.name);
+            if (len > 0 && acc.name[len - 1] == '\n') {
+                acc.name[len - 1] = '\0';
+            }
+
+            if (strlen(acc.name) == 0) {
+                printf("Name cannot be empty.\n");
+                continue;
+            }
+
+            if (strlen(acc.name) > 20) {
+                printf("WARNING: Name is longer than 20 characters and will be truncated.\n");
+                printf("Do you want to continue with truncated name? (Y/N): ");
+                char ch = getchar();
+                while ((getchar()) != '\n');
+                if (ch != 'Y' && ch != 'y') {
+                    continue;
+                }
+                acc.name[20] = '\0'; // truncate
+            }
+            break;
+        } while(1);
         printf("Name updated successfully.\n");
-    } else if (choice == 2) {
-        printf("Enter new address: ");
-        getchar();
-        fgets(acc.address, sizeof(acc.address), stdin);
-        acc.address[strcspn(acc.address, "\n")] = 0;
+
+    } 
+    else if (choice == 2) 
+    {
+        // Modify address
+        do {
+            printf("Enter new address (max 50 characters): ");
+            fgets(acc.address, sizeof(acc.address), stdin);
+            int len = strlen(acc.address);
+            if (len > 0 && acc.address[len - 1] == '\n') {
+                acc.address[len - 1] = '\0';
+            }
+
+            if (strlen(acc.address) == 0) {
+                printf("Address cannot be empty.\n");
+                continue;
+            }
+
+            if (strlen(acc.address) > 50) {
+                printf("WARNING: Address is longer than 50 characters and will be truncated.\n");
+                printf("Do you want to continue with truncated address? (Y/N): ");
+                char ch = getchar();
+                while ((getchar()) != '\n');
+                if (ch != 'Y' && ch != 'y') {
+                    continue;
+                }
+                acc.address[50] = '\0'; // truncate
+            }
+            break;
+        } while(1);
         printf("Address updated successfully.\n");
     }
+
     modify(fp, pos, &acc);
     fclose(fp);
 }
+
 
   
 void delete_account()
@@ -268,7 +367,6 @@ long int last_accno() {
     fclose(fp);
     return last;
 }
-
 
 int recordno() {
     FILE *fp = fopen("INITIAL.dat", "rb");
