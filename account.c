@@ -100,7 +100,8 @@ void display() {
             break;
         } else {
             printf(" Account not found please try again.\n");
-            rewind(fp); 
+            rewind(fp);  
+             
         }
     }
     rewind(fp);
