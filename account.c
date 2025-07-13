@@ -119,8 +119,6 @@ void display() {
   
     fclose(fp);  
 }
-  
-
 
 void modify(FILE *fp, long pos, initial *acc) {
     fseek(fp, pos, SEEK_SET);
