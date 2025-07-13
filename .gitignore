@@ -54,3 +54,4 @@ Thumbs.db
 *.bak
 *~
 test_transactions.c
+test.c
