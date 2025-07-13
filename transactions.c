@@ -3,22 +3,26 @@
 #include<string.h>
 #include "structs.h"
 
-void transaction() {
+void transaction()
+{
     FILE *fp_initial, *fp_banking;
     initial acc;
-    transaction trans;
+    banking trans;
     int flag = 0;
 
-    int acc_no;
-    printf("enter you account number \n");
-    scanf("%d",&acc_no);
+    long int acc_no;
+    printf("enter account number\n");
+    scanf("%ld", &acc_no);
+
 
     // opens the account
 
-    fp_initial = fopen("INITIAL.dat", "rb+");
+    fp_initial = fopen("INITIAL.dat", "rb");
 
-    if(fp_initial = NULL) {
+    if(fp_initial == NULL) {
         printf("Error opening account\n");
+        fclose(fp_initial);
+        return;
     }
 
     // reads the accounts and finds the one
@@ -30,8 +34,9 @@ void transaction() {
         }
     }
     
-    if(flag = 0) {
+    if(flag ==  0) {
         printf("account not found. \n");
+        fclose(fp_initial);
         return;
     }
 
@@ -66,6 +71,7 @@ void transaction() {
         return;
     }    
     trans.balance = acc.balance;
+    update_balance(acc); 
     add_to_file_transaction(trans);
     printf("Transaction successful. Updated balance: %.2f\n", acc.balance);   
 }
@@ -112,7 +118,7 @@ float give_balance(int acc_no) {
 }
 
 
-void add_to_file_transaction() {
+void add_to_file_transaction(banking trans) {
     FILE *fp = fopen("BANKING.dat", "ab");
     if (fp == NULL) {
         printf("Error opening BANKING.dat\n");
