@@ -59,7 +59,7 @@ void new_account(void)
             if (ch != 'Y' && ch != 'y') {
                 continue;
             }
-            acc.address[50] = '\0'; // truncate
+            acc.address[50] = '\0'; 
         }
         break;
     } while(1);
@@ -73,7 +73,7 @@ void new_account(void)
         }
     } while(acc.balance < 500);
 
-    while ((getchar()) != '\n'); // clear leftover input
+    while ((getchar()) != '\n'); 
 
     add_to_file(acc);
 
@@ -182,7 +182,7 @@ void modify_account(int choice)
     long int acc_no;
     printf("Enter account number to modify: ");
     scanf("%ld", &acc_no);
-    while ((getchar()) != '\n'); // clear buffer
+    while ((getchar()) != '\n'); 
 
     FILE *fp = fopen("INITIAL.dat", "rb+");
     if (!fp) {
