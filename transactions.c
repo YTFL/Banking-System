@@ -5,6 +5,8 @@
 #include "structs.h"
 #include "transactions.h"
 
+
+
 void transaction()
 {
     FILE *fp_initial, *fp_banking;
