@@ -7,8 +7,7 @@
 #include "transactions.h"
 #include "account.h"
 
-void transaction()
-{
+void transaction() {
     FILE *fp_initial;
     initial acc;
     banking trans;
@@ -16,21 +15,18 @@ void transaction()
     long int acc_no;
 
     // keep asking for valid account number
-    while (1) 
-    {
+    while (1) {
         printf("Enter account number: ");
         scanf("%ld", &acc_no);
         while (getchar() != '\n');
 
         fp_initial = fopen("INITIAL.dat", "rb");
-        if (fp_initial == NULL) 
-        {
+        if (fp_initial == NULL) {
             printf("Error opening account file.\n");
             return;
         }
 
-        if (!found_account(fp_initial, acc_no))
-        {
+        if (!found_account(fp_initial, acc_no)){
             printf("Account not found. Please try again.\n");
             fclose(fp_initial);
             continue;
@@ -38,10 +34,8 @@ void transaction()
 
         // load the account details
         rewind(fp_initial);
-        while (fread(&acc, sizeof(acc), 1, fp_initial))
-        {
-            if (acc.acc_no == acc_no)
-            {
+        while (fread(&acc, sizeof(acc), 1, fp_initial)) {
+            if (acc.acc_no == acc_no) {
                 break;
             }
         }
@@ -131,14 +125,14 @@ void transaction()
     printf("Transaction successful. Updated balance: %.2f\n", acc.balance);
 }
 
-void update_balance(initial acc) 
-{
+void update_balance(initial acc) {
     FILE *fp = fopen("INITIAL.dat", "r+b");
     if (!fp) {
         printf("Error opening INITIAL.dat\n");
         return;
     }
     initial temp;
+
     while (fread(&temp, sizeof(temp), 1, fp)) {
         if (temp.acc_no == acc.acc_no) {
             fseek(fp, -sizeof(temp), SEEK_CUR);
