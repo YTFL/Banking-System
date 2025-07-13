@@ -53,7 +53,7 @@ void display_account()
         return;
     }
 
-    banking t;  // Changed to banking struct
+    banking t; 
     float total_deposit = 0, total_withdraw = 0;
     int transaction_count = 0;
 
@@ -99,7 +99,7 @@ void display_account()
 
 void month_report()
 {
-    clear();
+    //clear();
     long int accno;
     printf("Enter account number: ");
     scanf("%ld", &accno);

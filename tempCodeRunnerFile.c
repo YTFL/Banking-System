@@ -1,0 +1,1 @@
+gcc main.c menu.c account.c reports.c transactions.c util.c -o banking_system -lm
