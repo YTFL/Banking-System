@@ -66,7 +66,8 @@ void display_list()
 initial acc;
 double total_balance = 0 ;
 
-while (fread(&acc, sizeof(initial), 1, fp) == 1) {
+while (fread(&acc, sizeof(initial), 1, fp) == 1)
+{
     printf("Account Number : %ld\n", acc.acc_no);
     printf("Name           : %s\n", acc.name);
     printf("Address        : %s\n", acc.address);
@@ -79,7 +80,7 @@ printf("Total Balance : %.2f",total_balance);
 fclose(fp);
 }
 
-}
+
 
 void display() {
 
