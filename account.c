@@ -88,10 +88,48 @@ void display_list() {
 void display() 
 {
   long int acc_no;
-  printf("Enter account number : ");
-  scanf("%ld",&acc_no);
-  while((getchar()) != '\n');
+  FILE *fp = fopen("INITIAL.dat","rb");
+  if(fp == NULL)
+  {
+       printf("Cannot open file");
+       return;
+  }
+  initial acc;
+  while (1) 
+  {
+        printf("Enter account number : ");
+        scanf("%ld", &acc_no);
+        while ((getchar()) != '\n'); 
+        if (found_account(fp, acc_no))
+        {
+            break;  
+        }
+        else
+        {
+            printf(" Account not found please try again.\n");
+            rewind(fp);  
+             
+        }
+    }
+
+     
+    while (fread(&acc, sizeof(acc), 1, fp))
+    {
+        if (acc.acc_no == acc_no)
+        {
+            printf("\n+------------------------ ACCOUNT DETAILS ------------------------+\n");
+            printf("Account Number : %ld\n", acc.acc_no);
+            printf("Name           : %s\n", acc.name);
+            printf("Address        : %s\n", acc.address);
+            printf("Balance        : %.2f\n", acc.balance);
+            break;
+        }
+    }
+
+    
 }
+  
+
 
 void modify(FILE *fp, long pos, initial *acc) {
     fseek(fp, pos, SEEK_SET);
