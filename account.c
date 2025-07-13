@@ -288,16 +288,26 @@ void delete_account()
        printf("Cannot open file");
        return;
    }
-    printf("Enter account number you want to delete : ");
-    scanf("%ld",&acc_no);
-    while((getchar()) != '\n');
-
-    if (!found_account(fp, acc_no))
+  while (1) 
+  {
+    printf("Enter account number you want to delete: ");
+    if (scanf("%ld", &acc_no) != 1) 
     {
-        printf("Account not found.\n");
-        fclose(fp);
-        return;
+        printf("Invalid input. Please re-enter account number.\n");
+        while ((getchar()) != '\n');
+        continue;
     }
+    while ((getchar()) != '\n'); 
+    if (!found_account(fp, acc_no)) 
+    {
+        printf(" Account not found.\n");
+        rewind(fp);
+    } else
+    {
+        break;
+    }
+}
+
     rewind(fp);
     FILE *temp = fopen("temp.dat","wb");
     if (temp == NULL)
@@ -319,7 +329,7 @@ void delete_account()
    fclose(temp);
    remove("INITIAL.dat");
    rename("temp.dat","INITIAL.dat");
-   printf("Account deleted successfully .\n");
+   printf("Account deleted successfully .\n\n");
    close_account(acc_no);
 }
 
@@ -352,7 +362,7 @@ void close_account(long int acc_no)
     fclose(temp);
     remove("BANKING.dat");
     rename("temp.dat","BANKING.dat");
-    printf("Transactions deleted successfully");
+    printf("Transactions deleted successfully\n");
     
 }
 
