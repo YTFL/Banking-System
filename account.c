@@ -126,7 +126,7 @@ void display()
         }
     }
 
-    
+  fclose(fp);  
 }
   
 
