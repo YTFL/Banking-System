@@ -221,11 +221,11 @@ void delete_account()
    remove("INITIAL.dat");
    rename("temp.dat","INITIAL.dat");
    printf("Account deleted successfully .\n");
-   close_account();
+   close_account(acc_no);
 }
 
 
-void close_account()
+void close_account(long int acc_no)
 {
     FILE *fp = fopen("BANKING.dat","rb");
     if(fp == NULL)
