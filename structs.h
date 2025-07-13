@@ -22,6 +22,6 @@ typedef struct {
     float interest;
     float amount;
     float balance;
-} transaction;
+} banking;
 
 #endif
