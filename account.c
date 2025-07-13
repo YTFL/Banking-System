@@ -179,6 +179,7 @@ void modify_account(int choice) {
     fclose(fp);
 }
 
+  
 void delete_account()
 {
    long int acc_no;
@@ -199,9 +200,29 @@ void delete_account()
         return;
     }
     rewind(fp);
-
-    
+    FILE *temp = fopen("temp.dat","wb");
+    if (temp == NULL)
+    {
+        printf("Cannot open file");
+        fclose(fp);
+        return;
+    }
+    initial acc;
+    while(fread(&acc, sizeof(acc), 1, fp))
+    {
+       if(acc.acc_no == acc_no)
+       {
+           continue;
+       }
+        fwrite(&acc, sizeof(acc), 1 , temp);
+   }
+   fclose(fp);
+   fclose(temp);
+   remove("INITIAL.dat");
+   rename("TEMP.dat","INITIAL.dat");
+   printf("Account deleted successfully .\n");
 }
+
 
 void close_account() {
 
