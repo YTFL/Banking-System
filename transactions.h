@@ -1,10 +1,10 @@
 #ifndef TRANSACTIONS_H
 #define TRANSACTIONS_H
 
-// Renamed function to avoid conflict with struct 'transaction'
+
 void transaction(void);
-void update_balance(void);
-float give_balance(void);
-void add_to_file_transaction(void);
+void update_balance(initial acc);
+float give_balance(long int acc_no);
+void add_to_file_transaction(banking trans);
 
 #endif
