@@ -239,6 +239,7 @@ void close_account(long int acc_no)
         fclose(fp);
         return;
     }
+    
 }
 
 long int last_accno() {
