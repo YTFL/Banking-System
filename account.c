@@ -10,25 +10,26 @@ void new_account(void)
      printf("\n-----Open New Account-----\n");
      acc.acc_no = last_accno() + 1;
     do {
-        printf("\nEnter Name: \n");
+        printf("\nEnter Name: ");
         fgets(acc.name,sizeof(acc.name),stdin);
         int len = strlen(acc.name);
         if (len > 0 && acc.name[len - 1] == '\n') {
             acc.name[len - 1] = '\0';
         }
     } while(strlen(acc.name) == 0);
-   
+    printf('\n');
+     
     do {
-        printf("Enter Address : \n");
+        printf("Enter Address : ");
         fgets(acc.address,sizeof(acc.address),stdin);
         int len = strlen(acc.address);
         if(len > 0  && acc.address[len-1] == '\n') {
             acc.address[len - 1] = '\0';
        }
     } while(strlen(acc.address)==0);
-  
+    printf('\n');
     do {
-        printf("Enter Initial deposit (initial deposit must be >=500) : \n");
+        printf("Enter Initial deposit (initial deposit must be >=500) : ");
         scanf("%f",&acc.balance);
         if(acc.balance < 500) { 
            printf("Initial deposit must be >=500\n");
@@ -66,15 +67,18 @@ void display_list() {
     double total_balance = 0 ;
 
     printf("%-20s %-20s %-40s %-20s\n" , "Account Number" , "Name" , "Address" , "Balance");
+    printf("+================+========================+================================================+=====================+\n");
 
     while (fread(&acc, sizeof(initial), 1, fp) == 1)
    {
-       printf("%-20ld %-20s %-40s %20.2f\n", acc.acc_no, acc.name, acc.address, acc.balance);
+       printf("| %-12ld | %-20s | %-50s | %17.2f |\n", acc.acc_no, acc.name, acc.address, acc.balance);
 
         total_balance += acc.balance;
     }
-
-    printf("%40s %50.2f\n", "Total Balance in Bank:", total_balance);
+     
+    printf("+----------------+------------------------+------------------------------------------------+---------------------+\n");
+    printf("| %40s | %50.2f |\n", "Total Balance in Bank:", total_balance);
+    printf("+----------------+------------------------+------------------------------------------------+---------------------+\n");
 
     fclose(fp);
 }
