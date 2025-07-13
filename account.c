@@ -179,8 +179,28 @@ void modify_account(int choice) {
     fclose(fp);
 }
 
-void delete_account() {
+void delete_account()
+{
+   long int acc_no;
+   FILE *fp = fopen("INITIAL.dat","rb");
+   if(fp == NULL)
+   {
+       printf("Cannot open file");
+       return;
+   }
+    printf("Enter account number you want to delete : ");
+    scanf("%ld",&acc_no);
+    while((getchar()) != '\n');
 
+    if (!found_account(fp, acc_no))
+    {
+        printf("Account not found.\n");
+        fclose(fp);
+        return;
+    }
+    rewind(fp);
+
+    
 }
 
 void close_account() {
