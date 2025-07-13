@@ -44,6 +44,9 @@ void main_menu(void) {
             case 0:
                 printf("Exiting menu.\n");
                 return;
+            default:
+                printf("Invalid choice. Please try again.\n");
+                break;
         }
     } while (choice != 0);
 }
