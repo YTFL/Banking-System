@@ -85,8 +85,12 @@ void display_list() {
 
 
 
-void display() {
-
+void display() 
+{
+  long int acc_no;
+  printf("Enter account number : ");
+  scanf("%ld",&acc_no);
+  while((getchar()) != '\n');
 }
 
 void modify(FILE *fp, long pos, initial *acc) {
