@@ -133,39 +133,21 @@ void transaction()
 
 void update_balance(initial acc) 
 {
-    FILE *fp = fopen("INITIAL.dat", "rb+");  
-    if (fp == NULL) {
+    FILE *fp = fopen("INITIAL.dat", "r+b");
+    if (!fp) {
         printf("Error opening INITIAL.dat\n");
         return;
     }
-
     initial temp;
-    while (fread(&temp, sizeof(temp), 1, fp)) 
-    {
-        if (temp.acc_no == acc.acc_no)
-        {
-            printf("Updating account %ld in file.\n", acc.acc_no);
-
-            if (fseek(fp, -sizeof(temp), SEEK_CUR) != 0) {
-                printf("Seek failed!\n");
-                fclose(fp);
-                return;
-            }
-
-            if (fwrite(&acc, sizeof(acc), 1, fp) != 1) {
-                printf("Write failed!\n");
-                fclose(fp);
-                return;
-            }
-
-            fflush(fp);  //  forces buffer to disk
+    while (fread(&temp, sizeof(temp), 1, fp)) {
+        if (temp.acc_no == acc.acc_no) {
+            fseek(fp, -sizeof(temp), SEEK_CUR);
+            fwrite(&acc, sizeof(acc), 1, fp);
             break;
         }
     }
-
     fclose(fp);
 }
-
 
 float give_balance(long int acc_no) {
     float balance = 0.0;
