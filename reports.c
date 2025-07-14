@@ -53,7 +53,7 @@ void display_account()
         return;
     }
 
-    banking t;  // Changed to banking struct
+    banking t; 
     float total_deposit = 0, total_withdraw = 0;
     int transaction_count = 0;
 
@@ -62,7 +62,7 @@ void display_account()
     printf("------------------------------------------------------------\n");
 
     // Read banking structs
-    while (fread(&t, sizeof(banking), 1, bank_fp))  // Changed to banking
+    while (fread(&t, sizeof(banking), 1, bank_fp)) 
     {
         if (t.acc_no == accno)
         {
