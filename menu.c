@@ -58,7 +58,7 @@ void edit_menu(void) {
         printf("\n==== EDIT MENU ====\n");
         printf("1. Change Account Holder Name\n");
         printf("2. Change Account Address\n");
-        printf("3. Delte Account\n");
+        printf("3. Delete Account\n");
         printf("4. Display Account Details\n");
         printf("0. Back to Main Menu\n");
         printf("Select an option: ");
