@@ -121,6 +121,7 @@ void month_report()
     }
 
     date from_date, to_date;
+    banking t;
 
     printf("\nEnter FROM date (dd mm yyyy): ");
     scanf("%d %d %d", &from_date.day, &from_date.month, &from_date.year);
@@ -131,11 +132,15 @@ void month_report()
     while ((ch = getchar()) != '\n' && ch != EOF);
 
     // Swap if dates are reversed
-    if (!isEarlier(from_date, to_date)) {
+   if (t.acc_no == accno &&
+    no_of_days(from_date, t.date) >= 0 &&
+    no_of_days(t.date, to_date) >= 0)
+    {
         date temp = from_date;
         from_date = to_date;
         to_date = temp;
     }
+
 
     // Get account name and initial deposit
     char name[50];
@@ -160,15 +165,17 @@ void month_report()
         return;
     }
 
-    banking t;
+ 
     float total_deposit = 0, total_withdraw = 0;
-    float opening_balance = initial_amount, closing_balance = initial_amount;
+    float opening_balance = initial_amount;
+    float running_balance = opening_balance;
     int transaction_count = 0;
 
     // Determine opening balance before from_date
     while (fread(&t, sizeof(banking), 1, bank_fp))
     {
-        if (t.acc_no == accno && isEarlier(t.date, from_date))
+        if (t.acc_no == accno && no_of_days(t.date, from_date) > 0)
+
         {
             opening_balance = t.balance;
         }
@@ -192,8 +199,8 @@ void month_report()
     while (fread(&t, sizeof(banking), 1, bank_fp))
     {
         if (t.acc_no == accno &&
-            (isEarlier(from_date, t.date) || (from_date.day == t.date.day && from_date.month == t.date.month && from_date.year == t.date.year)) &&
-            (isEarlier(t.date, to_date) || (to_date.day == t.date.day && to_date.month == t.date.month && to_date.year == t.date.year)))
+        no_of_days(from_date, t.date) >= 0 &&
+        no_of_days(t.date, to_date) >= 0)
         {
             transaction_count++;
 
@@ -202,20 +209,21 @@ void month_report()
             {
                 dep = t.amount;
                 total_deposit += dep;
+                running_balance += dep;
             }
             else
             {
                 wdr = t.amount;
                 total_withdraw += wdr;
+                running_balance -= wdr;
             }
 
             printf("| %02d-%02d-%02d | %-12s | %11.2f | %10.2f | %13.2f |\n",
                    t.date.day, t.date.month, t.date.year, t.type,
-                   dep, wdr, t.balance);
+                   dep, wdr, running_balance);
 
             printf("+-----------+--------------+-------------+------------+---------------+\n");
 
-            closing_balance = t.balance;
         }
     }
 
@@ -228,7 +236,7 @@ void month_report()
     {
         // Totals row
         printf("| %-10s | %-12s | %11.2f | %10.2f | %13.2f |\n",
-               "Total", "", total_deposit, total_withdraw, closing_balance);
+               "Total", "", total_deposit, total_withdraw, running_balance);
         printf("+===========+==============+=============+============+===============+\n");
     }
 
