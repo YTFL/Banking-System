@@ -108,13 +108,13 @@ void month_report()
 
     FILE *fp = fopen("INITIAL.dat", "rb");
     if (!fp) {
-        printf("\n\tERROR!\nCannot open account file!\n");
+        printf("\nERROR!\nCannot open account file!\n");
         return;
     }
 
     while (!found_account(fp, accno))
     {
-        printf("\n\tAccount not found. Please enter a valid account number: ");
+        printf("\nAccount not found. Please enter a valid account number: ");
         scanf("%ld", &accno);
         while ((ch = getchar()) != '\n' && ch != EOF);
         rewind(fp);
@@ -165,7 +165,7 @@ void month_report()
     FILE *bank_fp = fopen("BANKING.dat", "rb");
     if (!bank_fp)
     {
-        printf("\n\tSYSTEM ERROR!\nNo transaction records found!\n");
+        printf("\nSYSTEM ERROR!\nNo transaction records found!\n");
         fclose(fp);
         return;
     }
@@ -189,16 +189,16 @@ void month_report()
 
     // Print the report header
     printf("\n\n\t\t\t\t%s\n", name);
-    printf("+===========+==============+=============+============+===============+\n");
-    printf("|   Date    |  Particular  |   Deposit   |  Withdraw  |    Balance    |\n");
-    printf("+===========+==============+=============+============+===============+\n");
+    printf("+============+==============+=============+============+===============+\n");
+    printf("|   Date     |  Particular  |   Deposit   |  Withdraw  |    Balance    |\n");
+    printf("+============+==============+=============+============+===============+\n");
 
     // Print opening line
     printf("| %02d-%02d-%02d | %-12s | %11.2f | %10.2f | %13.2f |\n",
            from_date.day, from_date.month, from_date.year,
            "Opening", 0.00, 0.00, opening_balance);
 
-    printf("+-----------+--------------+-------------+------------+---------------+\n");
+    printf("+------------+--------------+-------------+------------+---------------+\n");
 
     // Process transactions
     while (fread(&t, sizeof(banking), 1, bank_fp))
@@ -227,7 +227,7 @@ void month_report()
                    t.date.day, t.date.month, t.date.year, t.type,
                    dep, wdr, running_balance);
 
-            printf("+-----------+--------------+-------------+------------+---------------+\n");
+            printf("+------------+--------------+-------------+------------+---------------+\n");
 
         }
     }
@@ -235,14 +235,14 @@ void month_report()
     if (transaction_count == 0)
     {
         printf("|   No transactions found in this date range.                          |\n");
-        printf("+===========+==============+=============+============+===============+\n");
+        printf("+============+==============+=============+============+===============+\n");
     }
     else
     {
         // Totals row
         printf("| %-10s | %-12s | %11.2f | %10.2f | %13.2f |\n",
                "Total", "", total_deposit, total_withdraw, running_balance);
-        printf("+===========+==============+=============+============+===============+\n");
+        printf("+============+==============+=============+============+===============+\n");
     }
 
     fclose(bank_fp);
