@@ -132,9 +132,14 @@ void month_report()
     while ((ch = getchar()) != '\n' && ch != EOF);
 
     // Swap if dates are reversed
-   if (t.acc_no == accno &&
-    no_of_days(from_date, t.date) >= 0 &&
-    no_of_days(t.date, to_date) >= 0)
+    // Swap if FROM date is after TO date
+    if (no_of_days(from_date, to_date) < 0)
+{
+    date temp = from_date;
+    from_date = to_date;
+    to_date = temp;
+}
+
     {
         date temp = from_date;
         from_date = to_date;
@@ -199,8 +204,8 @@ void month_report()
     while (fread(&t, sizeof(banking), 1, bank_fp))
     {
         if (t.acc_no == accno &&
-        no_of_days(from_date, t.date) >= 0 &&
-        no_of_days(t.date, to_date) >= 0)
+        no_of_days(from_date, t.date) <= 0 &&
+        no_of_days(t.date, to_date) <= 0)
         {
             transaction_count++;
 
