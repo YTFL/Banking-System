@@ -97,7 +97,7 @@ void display_account()
            total_deposit, total_withdraw, total_deposit - total_withdraw);
 }
 
-void date_range_report()
+void month_report()
 {
     long int accno;
     int ch;
