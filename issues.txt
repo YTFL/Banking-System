@@ -1,0 +1,9 @@
+1. Initial transaction not saved: Initial deposit is recorded in INITIAL.dat but not in BANKING.dat, so reports show no transaction.
+2. No cancel option mid-function: Once a function starts (like transaction or report), there's no way to go back without completing it.
+3. Delete account has no confirmation: Account gets deleted immediately with no confirmation prompt.
+4. Large amount causes overflow: Very large deposit values exceed data type limits and result in incorrect balances and corrupted .dat file.
+5. Monthly report date issues: Reports show weird data depending on the dates entered.
+6. Wrong account used for transaction: If a valid but wrong account number is entered, the transaction goes through without any confirmation.
+7. Wrong amount entered: There's no way to correct a mistyped amount. The only option is to make another reverse transaction, which creates confusion.
+8. No cancel option during transaction: If the user changes their mind mid-transaction, there's no way to cancel.
+9. Monthly report balance issue: Shows the wrong balances in the balance column
