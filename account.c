@@ -1,48 +1,72 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 #include "structs.h"
 #include "account.h"
+#include "transactions.h"  // needed for add_to_file_transaction
 
-void new_account(void) {
+void new_account(void) 
+{
     initial acc;
-    printf("\n-----Open New Account-----\n");
+    banking trans;
+    time_t now = time(NULL);
+    struct tm *local = localtime(&now);
+
+    printf("\n----- Open New Account -----\n");
     acc.acc_no = last_accno() + 1;
+
     do {
         printf("\nEnter Name: ");
-        fgets(acc.name,sizeof(acc.name),stdin);
+        fgets(acc.name, sizeof(acc.name), stdin);
         int len = strlen(acc.name);
         if (len > 0 && acc.name[len - 1] == '\n') {
             acc.name[len - 1] = '\0';
         }
     } while(strlen(acc.name) == 0);
-    printf("\n");
-     
+
     do {
-        printf("Enter Address : ");
-        fgets(acc.address,sizeof(acc.address),stdin);
+        printf("Enter Address: ");
+        fgets(acc.address, sizeof(acc.address), stdin);
         int len = strlen(acc.address);
-        if(len > 0  && acc.address[len-1] == '\n') {
+        if (len > 0 && acc.address[len - 1] == '\n') {
             acc.address[len - 1] = '\0';
-       }
-    } while(strlen(acc.address)==0);
-    printf("\n");
-    
-    do {
-        printf("Enter Initial deposit (initial deposit must be >=500) : ");
-        scanf("%f",&acc.balance);
-        if(acc.balance < 500) { 
-           printf("Initial deposit must be >=500\n");
         }
-    } while(acc.balance< 500);
-    
+    } while(strlen(acc.address) == 0);
+
+    do {
+        printf("Enter Initial deposit (>=500): ");
+        scanf("%f", &acc.balance);
+        if (acc.balance < 500) { 
+            printf("Initial deposit must be >=500\n");
+        }
+    } while(acc.balance < 500);
+
     while ((getchar()) != '\n');
+
     add_to_file(acc);
 
-    printf("Account created successfully!\n");
-    printf("Account Number : %ld \n",acc.acc_no);
-    printf("Balance : %.2f\n",acc.balance);
+    printf("\nNote: For new accounts, the first transaction will always be recorded as a CASH deposit.\n");
+
+    trans.acc_no = acc.acc_no;
+    strcpy(trans.trans, "deposit");
+    strcpy(trans.type, "cash");
+    trans.amount = acc.balance;
+    trans.interest = 0;
+    trans.balance = acc.balance;
+    trans.date.day = local->tm_mday;
+    trans.date.month = local->tm_mon + 1;
+    trans.date.year = local->tm_year + 1900;
+    strcpy(trans.remarks, "Initial deposit");
+
+    add_to_file_transaction(trans);
+
+    printf("\nAccount created successfully!\n");
+    printf("Account Number : %ld\n", acc.acc_no);
+    printf("Balance        : %.2f\n", acc.balance);
+    printf("An initial transaction has been recorded in BANKING.dat\n");
 }
+
 
 void add_to_file(initial acc) {
    FILE *fp = fopen("INITIAL.dat","ab");
@@ -61,7 +85,6 @@ void display_list() {
         printf("Cannot Open File\n");
         return ;
     }
-
 
     initial acc;
     double total_balance = 0 ;
@@ -82,8 +105,6 @@ void display_list() {
     fclose(fp);
 }
 
-
-
 void display() {
     long int acc_no;
     FILE *fp = fopen("INITIAL.dat","rb");
@@ -101,7 +122,6 @@ void display() {
         } else {
             printf("Account not found please try again.\n");
             rewind(fp);  
-             
         }
     }
     rewind(fp);
@@ -179,7 +199,6 @@ void modify_account(int choice) {
     fclose(fp);
 }
 
-  
 void delete_account() {
     long int acc_no;
     FILE *fp = fopen("INITIAL.dat","rb");
@@ -198,7 +217,6 @@ void delete_account() {
     }
     rewind(fp);
     FILE *temp = fopen("temp.dat","wb");
-    
     if (temp == NULL) {
         printf("Cannot open file");
         fclose(fp);
@@ -214,10 +232,9 @@ void delete_account() {
    fclose(temp);
    remove("INITIAL.dat");
    rename("temp.dat","INITIAL.dat");
-   printf("Account deleted successfully .\n");
+   printf("Account deleted successfully.\n");
    close_account(acc_no);
 }
-
 
 void close_account(long int acc_no) {
     FILE *fp = fopen("BANKING.dat","rb");
@@ -242,8 +259,7 @@ void close_account(long int acc_no) {
     fclose(temp);
     remove("BANKING.dat");
     rename("temp.dat","BANKING.dat");
-    printf("Transactions deleted successfully");
-    
+    printf("Transactions deleted successfully\n");
 }
 
 long int last_accno() {
@@ -257,7 +273,6 @@ long int last_accno() {
     fclose(fp);
     return last;
 }
-
 
 int recordno() {
     FILE *fp = fopen("INITIAL.dat", "rb");
