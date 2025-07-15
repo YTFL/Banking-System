@@ -36,7 +36,7 @@ void new_account(void)
 
     do {
         printf("Enter Initial deposit (>=500): ");
-        if (scanf("%f", &acc.balance) != 1) {
+        if (scanf("%lf", &acc.balance) != 1) {
             printf("Invalid input.\n");
             while (getchar() != '\n');
             continue;
@@ -53,7 +53,7 @@ void new_account(void)
     printf("Account Number : %ld\n", acc.acc_no);
     printf("Name           : %s\n", acc.name);
     printf("Address        : %s\n", acc.address);
-    printf("Balance        : %.2f\n", acc.balance);
+    printf("Balance        : %.2lf\n", acc.balance);
 
     printf("\nConfirm to create this account? (Y/N): ");
     char confirm = getchar();
@@ -82,7 +82,7 @@ void new_account(void)
 
     printf("\nAccount created successfully!\n");
     printf("Account Number : %ld\n", acc.acc_no);
-    printf("Balance        : %.2f\n", acc.balance);
+    printf("Balance        : %.2lf\n", acc.balance);
     printf("An initial transaction has been recorded in BANKING.dat\n");
 }
 
@@ -111,7 +111,7 @@ void display_list() {
     printf("+====================+========================+======================================================+=====================+\n");
 
     while (fread(&acc, sizeof(initial), 1, fp) == 1) {
-        printf("| %-18ld | %-22s | %-52s | %19.2f |\n", acc.acc_no, acc.name, acc.address, acc.balance);
+        printf("| %-18ld | %-22s | %-52s | %19.2lf |\n", acc.acc_no, acc.name, acc.address, acc.balance);
         printf("+--------------------+------------------------+------------------------------------------------------+---------------------+\n");
         total_balance += acc.balance;
     }
@@ -149,7 +149,7 @@ void display() {
             printf("Account Number : %ld\n", acc.acc_no);
             printf("Name           : %s\n", acc.name);
             printf("Address        : %s\n", acc.address);
-            printf("Balance        : %.2f\n", acc.balance);
+            printf("Balance        : %.2lf\n", acc.balance);
             break;
         }
     }
@@ -215,7 +215,7 @@ void modify_account(int choice) {
     printf("Account Number : %ld\n", acc.acc_no);
     printf("Name           : %s\n", acc.name);
     printf("Address        : %s\n", acc.address);
-    printf("Balance        : %.2f\n", acc.balance);
+    printf("Balance        : %.2lf\n", acc.balance);
 
     printf("\nConfirm to save these changes? (Y/N): ");
     char confirm = getchar();
