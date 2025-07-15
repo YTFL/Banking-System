@@ -26,7 +26,6 @@ void new_account(void)  {
         }
 
         acc.name[strcspn(acc.name, "\n")] = '\0';
-    } while(strlen(acc.name) == 0);
 
         if (strlen(acc.name) == 0) {
             printf("Name cannot be empty.\n");
