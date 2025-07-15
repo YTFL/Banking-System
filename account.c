@@ -16,7 +16,6 @@ void new_account(void)  {
     printf("\n----- Open New Account -----\n");
     acc.acc_no = last_accno() + 1;
 
-    // Input for Name
     do {
         printf("\nEnter Name: ");
         fgets(acc.name, sizeof(acc.name), stdin);
@@ -83,6 +82,9 @@ void new_account(void)  {
         printf("\nConfirm to create this account? (Y/N): ");
         confirm = getchar();
         while (getchar() != '\n');
+        if (confirm != 'Y' && confirm != 'y' && confirm != 'N' && confirm != 'n') {
+            printf("Invalid input. Please enter Y or N.\n");
+        }
     } while (confirm != 'Y' && confirm != 'y' && confirm != 'N' && confirm != 'n');
 
     if (confirm == 'N' || confirm == 'n') {
@@ -267,9 +269,12 @@ void modify_account(int choice) {
 
     char confirm;
     do {
-        printf("\nConfirm to create this account? (Y/N): ");
+        printf("\nConfirm to do perform the changes on your account? (Y/N): ");
         confirm = getchar();
         while (getchar() != '\n');
+        if (confirm != 'Y' && confirm != 'y' && confirm != 'N' && confirm != 'n') {
+            printf("Invalid input. Please enter Y or N.\n");
+        }
     } while (confirm != 'Y' && confirm != 'y' && confirm != 'N' && confirm != 'n');
 
     if (confirm == 'N' || confirm == 'n') {
