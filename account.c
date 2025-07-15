@@ -29,14 +29,13 @@ void new_account(void)
     } while(strlen(acc.address) == 0);
 
     do {
-        char input[50];
+        int deposit;
         printf("Enter Initial deposit (>=500): ");
-        fgets(input, sizeof(input), stdin);
-        if (scanf(input, "%lf", &acc.balance) != 1) {
+        if (scanf("%lf", &acc.balance) != 1) {
             printf("Invalid input. Please enter a number.\n");
             continue;
         }
-        if (acc.balance < 500) { 
+        if (acc.balance < 500 || acc.balance > 999999999.99) { 
             printf("Initial deposit must be >=500\n");
         }
     } while(acc.balance < 500);
