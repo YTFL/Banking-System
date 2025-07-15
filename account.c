@@ -41,6 +41,23 @@ void new_account(void)
         }
     } while(acc.balance < 500);
 
+    while ((getchar()) != '\n');
+
+    // REVIEW
+    printf("\nPlease review your details:\n");
+    printf("Account Number : %ld\n", acc.acc_no);
+    printf("Name           : %s\n", acc.name);
+    printf("Address        : %s\n", acc.address);
+    printf("Balance        : %.2lf\n", acc.balance);
+
+    printf("\nConfirm to create this account? (Y/N): ");
+    char confirm = getchar();
+    while ((getchar()) != '\n');
+    if (confirm != 'Y' && confirm != 'y') {
+        printf("Account creation cancelled.\n");
+        return;
+    }
+
     add_to_file(acc);
 
     printf("\nNote: For new accounts, the first transaction will always be recorded as a CASH deposit.\n");
@@ -106,7 +123,7 @@ void display() {
     long int acc_no;
     FILE *fp = fopen("INITIAL.dat","rb");
     if(fp == NULL) {
-        printf("Cannot open file");
+        printf("Cannot open file\n");
         return;
     }
     initial acc;
@@ -117,7 +134,7 @@ void display() {
         if (found_account(fp, acc_no)) {
             break;
         } else {
-            printf("Account not found please try again.\n");
+            printf("Account not found. Please try again.\n");
             rewind(fp);  
         }
     }
@@ -184,12 +201,24 @@ void modify_account(int choice) {
         printf("Enter new name: ");
         fgets(acc.name, sizeof(acc.name), stdin);
         acc.name[strcspn(acc.name, "\n")] = 0;
-        printf("Name updated successfully.\n");
     } else if (choice == 2) {
         printf("Enter new address: ");
         fgets(acc.address, sizeof(acc.address), stdin);
         acc.address[strcspn(acc.address, "\n")] = 0;
-        printf("Address updated successfully.\n");
+    }
+    printf("\nReview updated details:\n");
+    printf("Account Number : %ld\n", acc.acc_no);
+    printf("Name           : %s\n", acc.name);
+    printf("Address        : %s\n", acc.address);
+    printf("Balance        : %.2lf\n", acc.balance);
+
+    printf("\nConfirm to save these changes? (Y/N): ");
+    char confirm = getchar();
+    while ((getchar()) != '\n');
+    if (confirm != 'Y' && confirm != 'y') {
+        printf("Changes cancelled.\n");
+        fclose(fp);
+        return;
     }
     modify(fp, pos, &acc);
     fclose(fp);
@@ -211,6 +240,13 @@ void delete_account() {
         fclose(fp);
         return;
     }
+    printf("Are you sure you want to delete account %ld? (Y/N): ", acc_no);
+    char confirm = getchar();
+    while ((getchar()) != '\n');
+    if (confirm != 'Y' && confirm != 'y') {
+        printf("Deletion cancelled.\n");
+        return;
+    }
     rewind(fp);
     FILE *temp = fopen("temp.dat","wb");
     if (temp == NULL) {
@@ -221,15 +257,15 @@ void delete_account() {
     
     initial acc;
     while(fread(&acc, sizeof(acc), 1, fp)) {
-       if(acc.acc_no == acc_no) continue;
+        if(acc.acc_no == acc_no) continue;
         fwrite(&acc, sizeof(acc), 1 , temp);
    }
    fclose(fp);
    fclose(temp);
    remove("INITIAL.dat");
    rename("temp.dat","INITIAL.dat");
-   printf("Account deleted successfully.\n");
    close_account(acc_no);
+   printf("Account and associated transactions deleted successfully.\n");
 }
 
 void close_account(long int acc_no) {
@@ -255,7 +291,6 @@ void close_account(long int acc_no) {
     fclose(temp);
     remove("BANKING.dat");
     rename("temp.dat","BANKING.dat");
-    printf("Transactions deleted successfully\n");
 }
 
 long int last_accno() {
