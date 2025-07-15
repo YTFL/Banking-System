@@ -9,10 +9,14 @@
 #include "reports.h"
 
 // Case-insensitive string compare (cross-platform)
-int equals_ignore_case(const char *a, const char *b) {
-    while (*a && *b) {
-        if (tolower(*a) != tolower(*b)) return 0;
-        a++; b++;
+int equals_ignore_case(const char *a, const char *b)
+{
+    while (*a && *b)
+    {
+        if (tolower(*a) != tolower(*b))
+            return 0;
+        a++;
+        b++;
     }
     return *a == *b;
 }
@@ -24,7 +28,8 @@ void display_account()
     scanf("%ld", &accno);
 
     FILE *fp = fopen("INITIAL.dat", "rb");
-    if (!fp) {
+    if (!fp)
+    {
         printf("\n\tERROR!\nCannot open account file!\n");
         return;
     }
@@ -40,8 +45,10 @@ void display_account()
     float initial_balance = 0.0;
     initial acc;
     rewind(fp);
-    while (fread(&acc, sizeof(initial), 1, fp)) {
-        if (acc.acc_no == accno) {
+    while (fread(&acc, sizeof(initial), 1, fp))
+    {
+        if (acc.acc_no == accno)
+        {
             strcpy(name, acc.name);
             strcpy(address, acc.address);
             initial_balance = acc.balance;
@@ -108,6 +115,23 @@ void display_account()
     printf("------------------------------------------------------------\n");
     printf("TOTAL -> %10.2f  %10.2f  %10.2f\n\n",
            total_deposit, total_withdraw, running_balance);
+    // Update final balance in INITIAL.dat
+    FILE *init_fp = fopen("INITIAL.dat", "rb+");
+    if (init_fp)
+    {
+        initial acc_update;
+        while (fread(&acc_update, sizeof(initial), 1, init_fp))
+        {
+            if (acc_update.acc_no == accno)
+            {
+                acc_update.balance = running_balance;       // or closing_balance
+                fseek(init_fp, -sizeof(initial), SEEK_CUR); // Go back to overwrite
+                fwrite(&acc_update, sizeof(initial), 1, init_fp);
+                break;
+            }
+        }
+        fclose(init_fp);
+    }
 }
 
 void month_report()
@@ -117,10 +141,12 @@ void month_report()
 
     printf("Enter account number: ");
     scanf("%ld", &accno);
-    while ((ch = getchar()) != '\n' && ch != EOF);
+    while ((ch = getchar()) != '\n' && ch != EOF)
+        ;
 
     FILE *fp = fopen("INITIAL.dat", "rb");
-    if (!fp) {
+    if (!fp)
+    {
         printf("\nERROR!\nCannot open account file!\n");
         return;
     }
@@ -129,7 +155,8 @@ void month_report()
     {
         printf("\nAccount not found. Please enter a valid account number: ");
         scanf("%ld", &accno);
-        while ((ch = getchar()) != '\n' && ch != EOF);
+        while ((ch = getchar()) != '\n' && ch != EOF)
+            ;
         rewind(fp);
     }
 
@@ -137,36 +164,47 @@ void month_report()
     banking t;
 
     printf("\nEnter FROM date (dd mm yyyy): ");
-    while (1) {
-        if (scanf("%d %d %d", &from_date.day, &from_date.month, &from_date.year) != 3) {
+    while (1)
+    {
+        if (scanf("%d %d %d", &from_date.day, &from_date.month, &from_date.year) != 3)
+        {
             printf("Invalid format. Please enter as dd mm yyyy: ");
-            while ((ch = getchar()) != '\n' && ch != EOF);
+            while ((ch = getchar()) != '\n' && ch != EOF)
+                ;
             continue;
         }
-        if (!is_valid_date(from_date)) {
+        if (!is_valid_date(from_date))
+        {
             printf("Invalid date. Please enter a real date : ");
             continue;
         }
         break;
     }
-    while ((ch = getchar()) != '\n' && ch != EOF);
+    while ((ch = getchar()) != '\n' && ch != EOF)
+        ;
 
     printf("\nEnter TO date (dd mm yyyy): ");
-    while (1) {
-        if (scanf("%d %d %d", &to_date.day, &to_date.month, &to_date.year) != 3) {
+    while (1)
+    {
+        if (scanf("%d %d %d", &to_date.day, &to_date.month, &to_date.year) != 3)
+        {
             printf("Invalid format. Please enter as dd mm yyyy: ");
-            while ((ch = getchar()) != '\n' && ch != EOF);
+            while ((ch = getchar()) != '\n' && ch != EOF)
+                ;
             continue;
         }
-        if (!is_valid_date(to_date)) {
+        if (!is_valid_date(to_date))
+        {
             printf("Invalid date. Please enter a real date : ");
             continue;
         }
         break;
     }
-    while ((ch = getchar()) != '\n' && ch != EOF);
+    while ((ch = getchar()) != '\n' && ch != EOF)
+        ;
 
-    if (isEarlier(to_date, from_date)) {
+    if (isEarlier(to_date, from_date))
+    {
         date temp = from_date;
         from_date = to_date;
         to_date = temp;
@@ -208,7 +246,8 @@ void month_report()
     {
         if (t.acc_no == accno && isEarlier(t.date, from_date))
         {
-            if (!found || isEarlier(latest_before_from, t.date)) {
+            if (!found || isEarlier(latest_before_from, t.date))
+            {
                 opening_balance = t.balance;
                 running_balance = opening_balance;
                 latest_before_from = t.date;
@@ -218,7 +257,6 @@ void month_report()
     }
 
     opening_date = found ? latest_before_from : from_date;
-
 
     printf("\n\n\t\t\t\t%s\n", name);
     printf("+============+==============+=============+============+===============+\n");
@@ -262,11 +300,28 @@ void month_report()
     }
 
     closing_balance = running_balance;
+    // Update final balance in INITIAL.dat
+    FILE *init_fp = fopen("INITIAL.dat", "rb+");
+    if (init_fp)
+    {
+        initial acc_update;
+        while (fread(&acc_update, sizeof(initial), 1, init_fp))
+        {
+            if (acc_update.acc_no == accno)
+            {
+                acc_update.balance = running_balance;       // or closing_balance
+                fseek(init_fp, -sizeof(initial), SEEK_CUR); // Go back to overwrite
+                fwrite(&acc_update, sizeof(initial), 1, init_fp);
+                break;
+            }
+        }
+        fclose(init_fp);
+    }
 
     if (transaction_count == 0)
     {
         printf("|   No transactions found in this date range.                        |\n");
-         printf("+============+==============+=============+============+===============+\n");
+        printf("+============+==============+=============+============+===============+\n");
     }
     else
     {
@@ -292,7 +347,8 @@ void return_name(int accno, char *name_out)
     FILE *fp = fopen("INITIAL.dat", "rb");
     initial acc;
 
-    if (!fp) {
+    if (!fp)
+    {
         strcpy(name_out, "Error");
         return;
     }
@@ -313,7 +369,8 @@ void return_address(int accno, char *address_out)
     FILE *fp = fopen("INITIAL.dat", "rb");
     initial acc;
 
-    if (!fp) {
+    if (!fp)
+    {
         strcpy(address_out, "Error");
         return;
     }
