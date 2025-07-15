@@ -32,7 +32,7 @@ void new_account(void)
         char input[50];
         printf("Enter Initial deposit (>=500): ");
         fgets(input, sizeof(input), stdin);
-        if (sscanf(input, "%f", &acc.balance) != 1) {
+        if (scanf(input, "%lf", &acc.balance) != 1) {
             printf("Invalid input. Please enter a number.\n");
             continue;
         }
