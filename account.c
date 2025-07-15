@@ -84,7 +84,7 @@ void new_account(void)
 
 void add_to_file(initial acc) {
    FILE *fp = fopen("INITIAL.dat","ab");
-   if(fp == NULL){
+   if(fp == NULL) {
         printf("Could not open file.\n");
         return;
    }
