@@ -204,17 +204,10 @@ while ((ch = getchar()) != '\n' && ch != EOF);
     }
 
     // Print the report header
-<<<<<<< Updated upstream
-    printf("\n\n\t\t\t\t%s\n", name);
-    printf("+============+==============+=============+============+===============+\n");
-    printf("|   Date     |  Particular  |   Deposit   |  Withdraw  |    Balance    |\n");
-    printf("+============+==============+=============+============+===============+\n");
-=======
     printf("\n\n\t\t\t%s\n", name);
     printf("+============+==============+=============+=============+============+\n");
     printf("|   Date     |  Particular  |  Deposit    |  Withdraw   |  Balance   |\n");
     printf("+============+==============+=============+=============+============+\n");
->>>>>>> Stashed changes
 
     // Print opening line
     printf("| %02d-%02d-%04d | %-12s | %11.2f | %11.2f | %10.2f |\n",
@@ -222,11 +215,7 @@ while ((ch = getchar()) != '\n' && ch != EOF);
            "Opening", 0.00, 0.00, opening_balance);
     printf("+------------+--------------+-------------+-------------+------------+\n");
 
-<<<<<<< Updated upstream
-    printf("+------------+--------------+-------------+------------+---------------+\n");
-=======
     rewind(bank_fp);
->>>>>>> Stashed changes
 
     // Process transactions in date range
     while (fread(&t, sizeof(banking), 1, bank_fp))
@@ -254,36 +243,21 @@ while ((ch = getchar()) != '\n' && ch != EOF);
             printf("| %02d-%02d-%04d | %-12s | %11.2f | %11.2f | %10.2f |\n",
                    t.date.day, t.date.month, t.date.year, t.type,
                    dep, wdr, running_balance);
-<<<<<<< Updated upstream
-
-            printf("+------------+--------------+-------------+------------+---------------+\n");
-
-=======
             printf("+------------+--------------+-------------+-------------+------------+\n");
->>>>>>> Stashed changes
         }
     }
 
     if (transaction_count == 0)
     {
-<<<<<<< Updated upstream
-        printf("|   No transactions found in this date range.                          |\n");
-        printf("+============+==============+=============+============+===============+\n");
-=======
         printf("|   No transactions found in this date range.                        |\n");
         printf("+============+==============+=============+=============+============+\n");
->>>>>>> Stashed changes
     }
     else
     {
         // Totals row
         printf("| %-10s | %-12s | %11.2f | %11.2f | %10.2f |\n",
                "Total", "", total_deposit, total_withdraw, running_balance);
-<<<<<<< Updated upstream
-        printf("+============+==============+=============+============+===============+\n");
-=======
         printf("+============+==============+=============+=============+============+\n");
->>>>>>> Stashed changes
     }
 
     fclose(bank_fp);
