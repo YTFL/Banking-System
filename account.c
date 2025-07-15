@@ -4,7 +4,7 @@
 #include <time.h>
 #include "structs.h"
 #include "account.h"
-#include "transactions.h"  // needed for add_to_file_transaction
+#include "transactions.h"
 
 void new_account(void) 
 {
@@ -36,13 +36,32 @@ void new_account(void)
 
     do {
         printf("Enter Initial deposit (>=500): ");
-        scanf("%f", &acc.balance);
+        if (scanf("%f", &acc.balance) != 1) {
+            printf("Invalid input.\n");
+            while (getchar() != '\n');
+            continue;
+        }
         if (acc.balance < 500) { 
             printf("Initial deposit must be >=500\n");
         }
     } while(acc.balance < 500);
 
     while ((getchar()) != '\n');
+
+    // REVIEW
+    printf("\nPlease review your details:\n");
+    printf("Account Number : %ld\n", acc.acc_no);
+    printf("Name           : %s\n", acc.name);
+    printf("Address        : %s\n", acc.address);
+    printf("Balance        : %.2f\n", acc.balance);
+
+    printf("\nConfirm to create this account? (Y/N): ");
+    char confirm = getchar();
+    while ((getchar()) != '\n');
+    if (confirm != 'Y' && confirm != 'y') {
+        printf("Account creation cancelled.\n");
+        return;
+    }
 
     add_to_file(acc);
 
@@ -67,23 +86,21 @@ void new_account(void)
     printf("An initial transaction has been recorded in BANKING.dat\n");
 }
 
-
 void add_to_file(initial acc) {
-   FILE *fp = fopen("INITIAL.dat","ab");
-   if(fp == NULL){
+    FILE *fp = fopen("INITIAL.dat","ab");
+    if(fp == NULL){
         printf("Could not open file.\n");
         return;
-   }
-   fwrite(&acc, sizeof(acc), 1, fp);
-   fclose(fp); 
+    }
+    fwrite(&acc, sizeof(acc), 1, fp);
+    fclose(fp); 
 }
 
 void display_list() {
     FILE *fp = fopen("INITIAL.dat","rb");
-    if(fp == NULL)
-    {
+    if(fp == NULL) {
         printf("Cannot Open File\n");
-        return ;
+        return;
     }
 
     initial acc;
@@ -109,18 +126,18 @@ void display() {
     long int acc_no;
     FILE *fp = fopen("INITIAL.dat","rb");
     if(fp == NULL) {
-        printf("Cannot open file");
+        printf("Cannot open file.\n");
         return;
     }
     initial acc;
     while (1) {
-        printf("Enter account number : ");
+        printf("Enter account number: ");
         scanf("%ld", &acc_no);
         while ((getchar()) != '\n'); 
         if (found_account(fp, acc_no)) {
             break;
         } else {
-            printf("Account not found please try again.\n");
+            printf("Account not found. Please try again.\n");
             rewind(fp);  
         }
     }
@@ -162,6 +179,7 @@ void modify_account(int choice) {
     long int acc_no;
     printf("Enter account number to modify: ");
     scanf("%ld", &acc_no);
+    while ((getchar()) != '\n');
 
     FILE *fp = fopen("INITIAL.dat", "rb+");
     if (!fp) {
@@ -184,17 +202,30 @@ void modify_account(int choice) {
     }
     if (choice == 1) {
         printf("Enter new name: ");
-        getchar();
         fgets(acc.name, sizeof(acc.name), stdin);
         acc.name[strcspn(acc.name, "\n")] = 0;
-        printf("Name updated successfully.\n");
     } else if (choice == 2) {
         printf("Enter new address: ");
-        getchar();
         fgets(acc.address, sizeof(acc.address), stdin);
         acc.address[strcspn(acc.address, "\n")] = 0;
-        printf("Address updated successfully.\n");
     }
+
+    // REVIEW
+    printf("\nReview updated details:\n");
+    printf("Account Number : %ld\n", acc.acc_no);
+    printf("Name           : %s\n", acc.name);
+    printf("Address        : %s\n", acc.address);
+    printf("Balance        : %.2f\n", acc.balance);
+
+    printf("\nConfirm to save these changes? (Y/N): ");
+    char confirm = getchar();
+    while ((getchar()) != '\n');
+    if (confirm != 'Y' && confirm != 'y') {
+        printf("Changes cancelled.\n");
+        fclose(fp);
+        return;
+    }
+
     modify(fp, pos, &acc);
     fclose(fp);
 }
@@ -203,10 +234,10 @@ void delete_account() {
     long int acc_no;
     FILE *fp = fopen("INITIAL.dat","rb");
     if(fp == NULL) {
-        printf("Cannot open file");
+        printf("Cannot open file.\n");
         return;
     }
-    printf("Enter account number you want to delete : ");
+    printf("Enter account number to delete: ");
     scanf("%ld",&acc_no);
     while((getchar()) != '\n');
 
@@ -215,51 +246,54 @@ void delete_account() {
         fclose(fp);
         return;
     }
-    rewind(fp);
+    fclose(fp);
+
+    printf("Are you sure you want to delete account %ld? (Y/N): ", acc_no);
+    char confirm = getchar();
+    while ((getchar()) != '\n');
+    if (confirm != 'Y' && confirm != 'y') {
+        printf("Deletion cancelled.\n");
+        return;
+    }
+
+    fp = fopen("INITIAL.dat","rb");
     FILE *temp = fopen("temp.dat","wb");
     if (temp == NULL) {
-        printf("Cannot open file");
+        printf("Cannot open temp file.\n");
         fclose(fp);
         return;
     }
-    
     initial acc;
     while(fread(&acc, sizeof(acc), 1, fp)) {
-       if(acc.acc_no == acc_no) continue;
-        fwrite(&acc, sizeof(acc), 1 , temp);
-   }
-   fclose(fp);
-   fclose(temp);
-   remove("INITIAL.dat");
-   rename("temp.dat","INITIAL.dat");
-   printf("Account deleted successfully.\n");
-   close_account(acc_no);
+       if(acc.acc_no != acc_no)
+           fwrite(&acc, sizeof(acc), 1, temp);
+    }
+    fclose(fp);
+    fclose(temp);
+    remove("INITIAL.dat");
+    rename("temp.dat","INITIAL.dat");
+
+    close_account(acc_no);
+    printf("Account and associated transactions deleted successfully.\n");
 }
 
 void close_account(long int acc_no) {
     FILE *fp = fopen("BANKING.dat","rb");
-    if(fp == NULL) {
-        printf("Cannot open file");
-        return;
-    }
-    
+    if(fp == NULL) return;
     FILE *temp = fopen("temp.dat","wb");
     if(temp == NULL) {
-        printf("Cannot open file");
         fclose(fp);
         return;
     }
-    
     banking ban;
     while(fread(&ban, sizeof(ban) , 1 , fp)) {
-        if(ban.acc_no == acc_no) continue;
-        fwrite(&ban, sizeof(ban), 1, temp);
+        if(ban.acc_no != acc_no)
+            fwrite(&ban, sizeof(ban), 1, temp);
     }
     fclose(fp);
     fclose(temp);
     remove("BANKING.dat");
     rename("temp.dat","BANKING.dat");
-    printf("Transactions deleted successfully\n");
 }
 
 long int last_accno() {
