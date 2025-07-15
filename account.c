@@ -7,7 +7,7 @@
 #include "transactions.h"
 
 void new_account(void) 
-{
+{ 
     initial acc;
     banking trans;
     time_t now = time(NULL);
