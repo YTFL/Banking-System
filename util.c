@@ -60,3 +60,13 @@ int no_of_days(date d1, date d2) {
 
     return days;
 }
+int is_valid_date(date d) {
+    if (d.year < 1900 || d.month < 1 || d.month > 12)
+        return 0;
+
+    int max_days = getMonthDays(d.month, d.year);
+    if (d.day < 1 || d.day > max_days)
+        return 0;
+
+    return 1;
+}
