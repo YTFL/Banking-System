@@ -5,9 +5,9 @@
 #include "structs.h"
 #include "account.h"
 #include "transactions.h"
+#include "util.h"
 
-void new_account(void) 
-{ 
+void new_account(void)  { 
     initial acc;
     banking trans;
     time_t now = time(NULL);
@@ -16,50 +16,83 @@ void new_account(void)
     printf("\n----- Open New Account -----\n");
     acc.acc_no = last_accno() + 1;
 
+    // Input for Name
     do {
         printf("\nEnter Name: ");
         fgets(acc.name, sizeof(acc.name), stdin);
+
+        if (!strchr(acc.name, '\n')) {
+            clear_input_buffer();
+        }
+
         acc.name[strcspn(acc.name, "\n")] = '\0';
     } while(strlen(acc.name) == 0);
+
+        if (strlen(acc.name) == 0) {
+            printf("Name cannot be empty.\n");
+        }
+    } while (strlen(acc.name) == 0);
 
     do {
         printf("Enter Address: ");
         fgets(acc.address, sizeof(acc.address), stdin);
+
+        if (!strchr(acc.address, '\n')) {
+            clear_input_buffer();
+        }
+
         acc.address[strcspn(acc.address, "\n")] = '\0';
-    } while(strlen(acc.address) == 0);
+
+        if (strlen(acc.address) == 0) {
+            printf("Address cannot be empty.\n");
+        }
+    } while (strlen(acc.address) == 0);
+
+
+    char input[100];
 
     do {
-        int deposit;
-        printf("Enter Initial deposit (>=500): ");
-        if (scanf("%lf", &acc.balance) != 1) {
-            printf("Invalid input. Please enter a number.\n");
+        printf("Enter Initial deposit (>= 500): ");
+
+        if (!fgets(input, sizeof(input), stdin)) {
+            printf("Error reading input.\n");
             continue;
         }
-        if (acc.balance < 500 || acc.balance > 999999999.99) { 
-            printf("Initial deposit must be >=500\n");
+
+        input[strcspn(input, "\n")] = '\0';
+
+        if (sscanf(input, "%lf", &acc.balance) != 1) {
+            printf("Invalid input. Please enter a numeric value.\n");
+            continue;
         }
-    } while(acc.balance < 500);
 
-    while ((getchar()) != '\n');
+        if (acc.balance < 500 || acc.balance > 999999999.99) {
+            printf("The Minimum initial deposit is 500 and less than 1 billion.\n");
+        }
 
-    // REVIEW
+    } while (acc.balance < 500 || acc.balance > 999999999.99);
+
+
     printf("\nPlease review your details:\n");
     printf("Account Number : %ld\n", acc.acc_no);
     printf("Name           : %s\n", acc.name);
     printf("Address        : %s\n", acc.address);
     printf("Balance        : %.2lf\n", acc.balance);
 
-    printf("\nConfirm to create this account? (Y/N): ");
-    char confirm = getchar();
-    while ((getchar()) != '\n');
-    if (confirm != 'Y' && confirm != 'y') {
+    char confirm;
+    do {
+        printf("\nConfirm to create this account? (Y/N): ");
+        confirm = getchar();
+        while (getchar() != '\n');
+    } while (confirm != 'Y' && confirm != 'y' && confirm != 'N' && confirm != 'n');
+
+    if (confirm == 'N' || confirm == 'n') {
         printf("Account creation cancelled.\n");
         return;
     }
 
-    add_to_file(acc);
 
-    printf("\nNote: For new accounts, the first transaction will always be recorded as a CASH deposit.\n");
+    add_to_file(acc);
 
     trans.acc_no = acc.acc_no;
     strcpy(trans.trans, "deposit");
@@ -197,13 +230,35 @@ void modify_account(int choice) {
         }
     }
     if (choice == 1) {
-        printf("Enter new name: ");
+        do {
+        printf("\nEnter Name: ");
         fgets(acc.name, sizeof(acc.name), stdin);
-        acc.name[strcspn(acc.name, "\n")] = 0;
+
+        if (!strchr(acc.name, '\n')) {
+            clear_input_buffer();
+        }
+
+        acc.name[strcspn(acc.name, "\n")] = '\0';
+
+        if (strlen(acc.name) == 0) {
+            printf("Name cannot be empty.\n");
+        }
+    } while (strlen(acc.name) == 0);
     } else if (choice == 2) {
-        printf("Enter new address: ");
+        do {
+        printf("Enter Address: ");
         fgets(acc.address, sizeof(acc.address), stdin);
-        acc.address[strcspn(acc.address, "\n")] = 0;
+
+        if (!strchr(acc.address, '\n')) {
+            clear_input_buffer();
+        }
+
+        acc.address[strcspn(acc.address, "\n")] = '\0';
+
+        if (strlen(acc.address) == 0) {
+            printf("Address cannot be empty.\n");
+        }
+    } while (strlen(acc.address) == 0);
     }
     printf("\nReview updated details:\n");
     printf("Account Number : %ld\n", acc.acc_no);
@@ -211,12 +266,15 @@ void modify_account(int choice) {
     printf("Address        : %s\n", acc.address);
     printf("Balance        : %.2lf\n", acc.balance);
 
-    printf("\nConfirm to save these changes? (Y/N): ");
-    char confirm = getchar();
-    while ((getchar()) != '\n');
-    if (confirm != 'Y' && confirm != 'y') {
-        printf("Changes cancelled.\n");
-        fclose(fp);
+    char confirm;
+    do {
+        printf("\nConfirm to create this account? (Y/N): ");
+        confirm = getchar();
+        while (getchar() != '\n');
+    } while (confirm != 'Y' && confirm != 'y' && confirm != 'N' && confirm != 'n');
+
+    if (confirm == 'N' || confirm == 'n') {
+        printf("Account creation cancelled.\n");
         return;
     }
     modify(fp, pos, &acc);

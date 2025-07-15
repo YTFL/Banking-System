@@ -70,3 +70,9 @@ int is_valid_date(date d) {
 
     return 1;
 }
+
+void clear_input_buffer() {
+    int ch;
+    while ((ch = getchar()) != '\n' && ch != EOF);
+}
+
