@@ -7,3 +7,6 @@
 7. Wrong amount entered: There's no way to correct a mistyped amount. The only option is to make another reverse transaction, which creates confusion.
 8. No cancel option during transaction: If the user changes their mind mid-transaction, there's no way to cancel.
 9. Monthly report balance issue: Shows the wrong balances in the balance column
+10. No confirmation when creating new account: There is no option to cancel at the start or confirm at the end, so accounts can be created accidentally without review.
+11. No review before saving account or modified details: When creating or modifying an account, there’s no summary or confirmation before saving, which can lead to unintentional changes.
+12. No check for exact duplicate name and address: If the user enters a name and address that exactly match an existing account, the system doesn’t notify them or allow them to retrieve the old account, potentially leading to unnecessary duplicate accounts.
