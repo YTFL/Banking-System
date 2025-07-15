@@ -29,8 +29,18 @@ void display_account()
     }
 
     char name[50], address[100];
-    return_name(accno, name);
-    return_address(accno, address);
+    float initial_balance = 0.0;
+    initial acc;
+    rewind(fp);
+    while (fread(&acc, sizeof(initial), 1, fp)) {
+        if (acc.acc_no == accno) {
+            strcpy(name, acc.name);
+            strcpy(address, acc.address);
+            initial_balance = acc.balance;
+            break;
+        }
+    }
+
 
     // Get current date for report
     time_t now = time(NULL);
@@ -124,26 +134,26 @@ void month_report()
     banking t;
 
     printf("\nEnter FROM date (dd mm yyyy): ");
-    scanf("%d %d %d", &from_date.day, &from_date.month, &from_date.year);
+while (scanf("%d %d %d", &from_date.day, &from_date.month, &from_date.year) != 3) {
+    printf("Invalid date format. Please enter as dd mm yyyy: ");
     while ((ch = getchar()) != '\n' && ch != EOF);
+}
+while ((ch = getchar()) != '\n' && ch != EOF);
 
-    printf("Enter TO date (dd mm yyyy): ");
-    scanf("%d %d %d", &to_date.day, &to_date.month, &to_date.year);
+
+    printf("\nEnter TO date (dd mm yyyy): ");
+while (scanf("%d %d %d", &to_date.day, &to_date.month, &to_date.year) != 3) {
+    printf("Invalid date format. Please enter as dd mm yyyy: ");
     while ((ch = getchar()) != '\n' && ch != EOF);
+}
+while ((ch = getchar()) != '\n' && ch != EOF);
+
 
     // Swap if dates are reversed
-    // Swap if FROM date is after TO date
-    if (no_of_days(from_date, to_date) < 0)
-{
+    if (isEarlier(to_date, from_date)) {
     date temp = from_date;
     from_date = to_date;
     to_date = temp;
-}
-
-    {
-        date temp = from_date;
-        from_date = to_date;
-        to_date = temp;
     }
 
 
@@ -170,46 +180,62 @@ void month_report()
         return;
     }
 
- 
     float total_deposit = 0, total_withdraw = 0;
     float opening_balance = initial_amount;
     float running_balance = opening_balance;
     int transaction_count = 0;
 
     // Determine opening balance before from_date
+        date latest_before_from = {0, 0, 0};
+        rewind(bank_fp);
+        int found = 0;
+
     while (fread(&t, sizeof(banking), 1, bank_fp))
     {
-        if (t.acc_no == accno && no_of_days(t.date, from_date) > 0)
-
+        if (t.acc_no == accno && isEarlier(t.date, from_date))
         {
-            opening_balance = t.balance;
+            if (!found || isEarlier(latest_before_from, t.date)) {
+                opening_balance = t.balance;
+                running_balance = opening_balance;
+                latest_before_from = t.date;
+                found = 1;
+            }
         }
     }
-    rewind(bank_fp);
 
     // Print the report header
+<<<<<<< Updated upstream
     printf("\n\n\t\t\t\t%s\n", name);
     printf("+============+==============+=============+============+===============+\n");
     printf("|   Date     |  Particular  |   Deposit   |  Withdraw  |    Balance    |\n");
     printf("+============+==============+=============+============+===============+\n");
+=======
+    printf("\n\n\t\t\t%s\n", name);
+    printf("+============+==============+=============+=============+============+\n");
+    printf("|   Date     |  Particular  |  Deposit    |  Withdraw   |  Balance   |\n");
+    printf("+============+==============+=============+=============+============+\n");
+>>>>>>> Stashed changes
 
     // Print opening line
-    printf("| %02d-%02d-%02d | %-12s | %11.2f | %10.2f | %13.2f |\n",
+    printf("| %02d-%02d-%04d | %-12s | %11.2f | %11.2f | %10.2f |\n",
            from_date.day, from_date.month, from_date.year,
            "Opening", 0.00, 0.00, opening_balance);
+    printf("+------------+--------------+-------------+-------------+------------+\n");
 
+<<<<<<< Updated upstream
     printf("+------------+--------------+-------------+------------+---------------+\n");
+=======
+    rewind(bank_fp);
+>>>>>>> Stashed changes
 
-    // Process transactions
+    // Process transactions in date range
     while (fread(&t, sizeof(banking), 1, bank_fp))
     {
         if (t.acc_no == accno &&
-        no_of_days(from_date, t.date) <= 0 &&
-        no_of_days(t.date, to_date) <= 0)
+            !isEarlier(t.date, from_date) && !isEarlier(to_date, t.date))
         {
-            transaction_count++;
-
             float dep = 0.0, wdr = 0.0;
+
             if (strcmp(t.trans, "Deposit") == 0 || strcmp(t.trans, "Initial") == 0)
             {
                 dep = t.amount;
@@ -223,33 +249,46 @@ void month_report()
                 running_balance -= wdr;
             }
 
-            printf("| %02d-%02d-%02d | %-12s | %11.2f | %10.2f | %13.2f |\n",
+            transaction_count++;
+
+            printf("| %02d-%02d-%04d | %-12s | %11.2f | %11.2f | %10.2f |\n",
                    t.date.day, t.date.month, t.date.year, t.type,
                    dep, wdr, running_balance);
+<<<<<<< Updated upstream
 
             printf("+------------+--------------+-------------+------------+---------------+\n");
 
+=======
+            printf("+------------+--------------+-------------+-------------+------------+\n");
+>>>>>>> Stashed changes
         }
     }
 
     if (transaction_count == 0)
     {
+<<<<<<< Updated upstream
         printf("|   No transactions found in this date range.                          |\n");
         printf("+============+==============+=============+============+===============+\n");
+=======
+        printf("|   No transactions found in this date range.                        |\n");
+        printf("+============+==============+=============+=============+============+\n");
+>>>>>>> Stashed changes
     }
     else
     {
         // Totals row
-        printf("| %-10s | %-12s | %11.2f | %10.2f | %13.2f |\n",
+        printf("| %-10s | %-12s | %11.2f | %11.2f | %10.2f |\n",
                "Total", "", total_deposit, total_withdraw, running_balance);
+<<<<<<< Updated upstream
         printf("+============+==============+=============+============+===============+\n");
+=======
+        printf("+============+==============+=============+=============+============+\n");
+>>>>>>> Stashed changes
     }
 
     fclose(bank_fp);
     fclose(fp);
 }
-
-
 
 void box_for_display()
 {

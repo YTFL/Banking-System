@@ -4,5 +4,6 @@
 
 void clear();
 int no_of_days(date d1, date d2);
+int isEarlier(date d1, date d2);
 
 #endif
