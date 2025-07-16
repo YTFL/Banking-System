@@ -125,21 +125,106 @@ void month_report() {
     int found = 0;
     float total_deposit = 0.0, total_withdraw = 0.0;
 
-    printf("Enter account number: ");
-    scanf("%ld", &acc_no);
-
-    printf("Enter month (MM): ");
-    scanf("%d", &month);
-
-    printf("Enter year (YYYY): ");
-    scanf("%d", &year);
-
     fp = fopen("BANKING.dat", "rb");
     if (fp == NULL) {
         printf("Error: Cannot open BANKING.dat\n");
         return;
     }
+    
+    long int accno;
+    initial acc;
+    while (1) {
+        FILE *fp_initial = fopen("INITIAL.dat", "rb");
+        if (fp_initial == NULL) {
+            printf("Error opening account file.\n");
+            return;
+        }
+        
+        while (1) {
+            printf("Enter account number or enter 0 to go back: ");
+            scanf("%ld", &acc_no);
+            clear_input_buffer(); 
+            if (found_account(fp_initial, acc_no)) {
+                break;
+            } else if (accno == 0) {
+                fclose(fp_initial);
+                return;
+            } else {
+                printf("Account not found. Please try again.\n");
+                rewind(fp_initial);  
+            }
+        }
 
+        rewind(fp_initial);
+        while (fread(&acc, sizeof(acc), 1, fp_initial)) {
+            if (acc.acc_no == acc_no) {
+                break;
+            }
+        }
+
+        fclose(fp_initial);
+        break; 
+    }
+
+    printf("Account holder: %s\n", acc.name);
+    printf("Current balance: %.2f\n", acc.balance);
+
+    char confirm;
+    do {
+        printf("\nProceed with this account? (Y/N): ");
+        confirm = getchar();
+        while (getchar() != '\n');
+        if (confirm != 'Y' && confirm != 'y' && confirm != 'N' && confirm != 'n') {
+            printf("Invalid input. Please enter Y or N.\n");
+        }
+    } while (confirm != 'Y' && confirm != 'y' && confirm != 'N' && confirm != 'n');
+
+    if (confirm == 'N' || confirm == 'n') {
+        printf("Reports cancelled.\n");
+        return;
+    }
+    
+    time_t now = time(NULL);
+    struct tm *current_time = localtime(&now);
+    int current_month = current_time->tm_mon + 1;
+    int current_year = current_time->tm_year + 1900; 
+    while (1) {
+        printf("Enter month (MM) or enter 0 to cancel: ");
+        scanf("%d", &month);
+        if (month == 0) {
+            fclose(fp);
+            return;
+        }
+        if (month < 1 || month > 12) {
+            printf("Invalid month. Please enter a value between 1 and 12.\n");
+            continue;
+        }
+
+        printf("Enter year (YYYY) or enter 0 to cancel: ");
+        scanf("%d", &year);
+        if (year == 0) {
+            fclose(fp);
+            return;
+        }
+        if (year < 1900) {
+            printf("Invalid year. Please enter a year >= 1900.\n");
+            continue;
+        } 
+        if (year > current_year || (year == current_year && month > current_month)) {
+            printf("Entered date is in the future. Please try again.\n");
+            continue;
+        }
+
+        break;
+    }
+    
+    char name[20], address[50];
+    return_name(acc_no, name);
+    return_address(acc_no, address);
+    printf("\nAccount Number: %ld\n", acc_no);
+    printf("Account Holder: %s\n", name);
+    printf("Address: %s\n", address);
+    printf("Month: %02d, Year: %d\n", month, year);
     printf("\n\t\tMONTHLY STATEMENT\n");
     printf("+============+=============+==========+==========+==========+\n");
     printf("| Date       | Particular  | Deposit  | Withdraw | Balance  |\n");
@@ -165,7 +250,7 @@ void month_report() {
     }
 
     if (!found) {
-        printf("| No transactions found for this account in %02d/%d.           |\n", month, year);
+        printf("| No transactions found for this account in %02d/%d.        |\n", month, year);
     }
 
     printf("+------------+-------------+----------+----------+----------+\n");
