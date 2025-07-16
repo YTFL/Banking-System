@@ -19,7 +19,7 @@ void main_menu(void) {
         printf("Select an option: ");
         if (scanf("%d", &choice) != 1) {
             printf("Invalid input. Please enter a number.\n");
-            while (getchar() != '\n');
+            clear_input_buffer();
             continue;
         }
         getchar();
@@ -62,7 +62,11 @@ void edit_menu(void) {
         printf("4. Display Account Details\n");
         printf("0. Back to Main Menu\n");
         printf("Select an option: ");
-        scanf("%d", &choice);
+         if (scanf("%d", &choice) != 1) {
+            printf("Invalid input. Please enter a number.\n");
+            clear_input_buffer();
+            continue;
+        }
         switch (choice) {
             case 1:
             case 2:
@@ -91,7 +95,11 @@ void reports(void) {
         printf("2. Monthly Report\n");
         printf("0. Back to Main Menu\n");
         printf("Select an option: ");
-        scanf("%d", &choice);
+         if (scanf("%d", &choice) != 1) {
+            printf("Invalid input. Please enter a number.\n");
+            clear_input_buffer();
+            continue;
+        }
         switch (choice) {
             case 1:
                 display_account();
