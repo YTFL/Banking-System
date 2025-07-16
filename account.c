@@ -50,8 +50,18 @@ void new_account(void)  {
     FILE *fp = fopen("INITIAL.dat", "rb");
     if (fp == NULL)
     {
-        printf("Error opening INITIAL.dat\n");
-        return;
+        fp = fopen("INITIAL.dat", "wb");
+        if (fp == NULL) {
+            printf("Error: Could not create INITIAL.dat\n");
+            return;
+        }
+        fclose(fp);
+        fp = fopen("INITIAL.dat", "rb");
+        if (fp == NULL)
+        {
+            printf("Error: Could not reopen INITIAL.dat\n");
+            return;
+        }
     }
   
     initial copy;
