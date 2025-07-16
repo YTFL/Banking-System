@@ -87,7 +87,7 @@ void reports(void) {
     int choice;
     do {
         printf("\n==== REPORTS MENU ====\n");
-        printf("1. Display Account\n");
+        printf("1. Lifetime Report\n");
         printf("2. Monthly Report\n");
         printf("0. Back to Main Menu\n");
         printf("Select an option: ");

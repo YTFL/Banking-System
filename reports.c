@@ -117,217 +117,65 @@ void display_account()
            total_deposit, total_withdraw, "");
 }
 
-void month_report()
-{
-    long int accno;
-    int ch;
+void month_report() {
+    FILE *fp;
+    banking t;
+    long int acc_no;
+    int month, year;
+    int found = 0;
+    float total_deposit = 0.0, total_withdraw = 0.0;
 
     printf("Enter account number: ");
-    scanf("%ld", &accno);
-    clear_input_buffer();
+    scanf("%ld", &acc_no);
 
-    FILE *fp = fopen("INITIAL.dat", "rb");
-    if (!fp)
-    {
-        printf("\nERROR!\nCannot open account file!\n");
+    printf("Enter month (MM): ");
+    scanf("%d", &month);
+
+    printf("Enter year (YYYY): ");
+    scanf("%d", &year);
+
+    fp = fopen("BANKING.dat", "rb");
+    if (fp == NULL) {
+        printf("Error: Cannot open BANKING.dat\n");
         return;
     }
 
-    while (!found_account(fp, accno))
-    {
-        printf("\nAccount not found. Please enter a valid account number: ");
-        scanf("%ld", &accno);
-        clear_input_buffer();
-        rewind(fp);
-    }
+    printf("\n\t\tMONTHLY STATEMENT\n");
+    printf("+============+=============+==========+==========+==========+\n");
+    printf("| Date       | Particular  | Deposit  | Withdraw | Balance  |\n");
+    printf("+============+=============+==========+==========+==========+\n");
 
-    date from_date, to_date;
-    banking t;
+    while (fread(&t, sizeof(t), 1, fp)) {
+        if (t.acc_no == acc_no && t.date.month == month && t.date.year == year) {
+            found = 1;
 
-    printf("\nEnter FROM date (dd mm yyyy): ");// gather from date from user
-    while (1)
-    {
-        if (scanf("%d %d %d", &from_date.day, &from_date.month, &from_date.year) != 3)
-        {
-            printf("Invalid format. Please enter as dd mm yyyy: ");
-            clear_input_buffer();
-            continue;
-        }
-        if (!is_valid_date(from_date))
-        {
-             if (from_date.year > 2025) {
-                 printf("Error: Year beyond 2025 is not supported.\nPlease enter a real date : ");
-                 continue;
-            }
-            else if (from_date.year < 1900) {
-                printf("Error: Year must be 1900 or later.\nPlease enter a real date : ");
-                continue;
-            }
-            else { printf("Invalid date. Please enter a real date : ");
-            continue;
-            }
-        }
-        break;
-    }
-    clear_input_buffer();
+            float deposit_amt = 0.0, withdraw_amt = 0.0;
+            if ((strcmp(t.trans, "Deposit") == 0)|| (strcmp(t.trans, "deposit") == 0))
+                deposit_amt = t.amount;
+            else if ((strcmp(t.trans, "Withdraw") == 0) || (strcmp(t.trans, "withdraw") == 0))
+                withdraw_amt = t.amount;
 
-    printf("\nEnter TO date (dd mm yyyy): ");// gather to date from user
-    while (1)
-    {
-        if (scanf("%d %d %d", &to_date.day, &to_date.month, &to_date.year) != 3)
-        {
-            printf("Invalid format. Please enter as dd mm yyyy: ");
-            clear_input_buffer();
-            continue;
-        }
-        if (!is_valid_date(to_date))
-        {
-             if (to_date.year > 2025) {
-                 printf("Error: Year beyond 2025 is not supported.\nPlease enter a real date : ");
-                 continue;
-            }
-            else if (to_date.year < 1900) {
-                printf("Error: Year must be 1900 or later.\nPlease enter a real date : ");
-                continue;
-            }
-            else { printf("Invalid date. Please enter a real date : ");
-            continue;
-            }
-        }
-        break;
-    }
-   clear_input_buffer();
+            total_deposit += deposit_amt;
+            total_withdraw += withdraw_amt;
 
-    if (isEarlier(to_date, from_date))//swap dates if needed
-    {
-        date temp = from_date;
-        from_date = to_date;
-        to_date = temp;
-    }
-
-    char name[50];//variables
-    float initial_amount = 0;
-    initial acc;
-
-    FILE *bank_fp = fopen("BANKING.dat", "rb");
-    if (!bank_fp)
-    {
-        printf("\nSYSTEM ERROR!\nNo transaction records found!\n");
-        fclose(fp);
-        return;
-    }
-    date creation_date = {0};  // To store the first transaction date (account creation)
-    int creation_date_found = 0;
-
-   banking first_transaction;
-
-rewind(bank_fp);
-while (fread(&t, sizeof(banking), 1, bank_fp)) {
-    if (t.acc_no == accno) {
-        if (!creation_date_found || isEarlier(t.date, first_transaction.date)) {
-            first_transaction = t;
-            creation_date_found = 1;
-            strcpy(name, acc.name);
-        }
-    }
-}
-creation_date = first_transaction.date;
-
-
-
-    float total_deposit = 0, total_withdraw = 0;// initialize totals
-    float opening_balance = 0;
-    float running_balance = opening_balance;
-    float closing_balance = 0;
-    int transaction_count = 0;
-    banking latest_before_from;
-    date opening_date;
-    int found = 0;
-
-    while (fread(&t, sizeof(banking), 1, bank_fp))//iterate through banking transactions
-    {
-        if (t.acc_no == accno && isEarlier(t.date, from_date))
-        {
-            if (!found || isEarlier(latest_before_from.date, t.date))
-            {
-                latest_before_from.balance = t.balance;
-                latest_before_from.date = t.date;
-
-                found = 1;
-            }
-        }
-    }
-     opening_balance = found ? latest_before_from.balance : first_transaction.balance;
-     running_balance = opening_balance;
-     if (creation_date_found && isEarlier(from_date, creation_date)) // if the from_date is before the creation date
-    opening_date = creation_date;
-     else 
-    opening_date = from_date;
-    
-    printf("\n\n\t\t\t\t%s\n", name);
-    printf("+============+==============+=============+============+===============+\n");
-    printf("|   Date     |  Particular  |   Deposit   |  Withdraw  |    Balance    |\n");
-    printf("+============+==============+=============+============+===============+\n");
-
-    printf("| %02d-%02d-%04d | %-12s | %11.2s | %10.2s | %13.2f |\n",
-           opening_date.day, opening_date.month, opening_date.year,
-           "Opening", "   ", "   ", opening_balance);
-    printf("+------------+--------------+-------------+-------------+--------------+\n");
-
-    rewind(bank_fp);
-
-    while (fread(&t, sizeof(banking), 1, bank_fp))//print records in the specified date range
-    {
-        if (t.acc_no == accno &&
-            !isEarlier(t.date, from_date) && !isEarlier(to_date, t.date))
-        { // Skip first transaction if already used as opening balance
-        if (!found && t.date.day == first_transaction.date.day &&
-            t.date.month == first_transaction.date.month &&
-            t.date.year == first_transaction.date.year &&
-            t.amount == first_transaction.amount &&
-            strcmp(t.trans, first_transaction.trans) == 0 &&
-            strcmp(t.type, first_transaction.type) == 0) 
-            continue;  // skip duplicate
-            
-            float dep = 0.0, wdr = 0.0;
-
-            if (equals_ignore_case(t.trans, "Deposit") || equals_ignore_case(t.trans, "Initial"))
-            {
-                dep = t.amount;
-                total_deposit += dep;
-                running_balance += dep;
-            }
-            else
-            {
-                wdr = t.amount;
-                total_withdraw += wdr;
-                running_balance -= wdr;
-            }
-
-            transaction_count++;
-
-            printf("| %02d-%02d-%04d | %-12s | %11.2f | %10.2f | %13.2f |\n",
-                   t.date.day, t.date.month, t.date.year, t.type,
-                   dep, wdr, running_balance);
-            printf("+------------+--------------+-------------+------------+---------------+\n");
+            printf("| %02d-%02d-%04d | %-11s | %8.2f | %8.2f | %8.2f |\n",
+                   t.date.day, t.date.month, t.date.year,
+                   t.type, deposit_amt, withdraw_amt, t.balance);
         }
     }
 
-    closing_balance = running_balance;
-
-    if (transaction_count == 0)
-    {
-        printf("|   No transactions found in this date range.                        |\n");
-        printf("+============+==============+=============+============+===============+\n");
-    }
-    else
-    {
-        printf("| %-10s | %-12s | %11.2f | %10.2f | %13.2s |\n",
-               "Total", "", total_deposit, total_withdraw, "");
-        printf("+============+==============+=============+============+===============+\n");
+    if (!found) {
+        printf("| No transactions found for this account in %02d/%d.           |\n", month, year);
     }
 
-    fclose(bank_fp);
+    printf("+------------+-------------+----------+----------+----------+\n");
+
+    if (found) {
+        printf("| %-24s | %8.2f | %8.2f |          |\n",
+               "Total", total_deposit, total_withdraw);
+        printf("+------------+-------------+----------+----------+----------+\n");
+    }
+
     fclose(fp);
 }
 

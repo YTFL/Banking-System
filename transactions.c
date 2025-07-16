@@ -111,26 +111,6 @@ void transaction() {
         printf("Invalid mode. Please enter 'cash' or 'cheque'.\n");
     }
 
-    // amount loop
-    // while (1) {
-    //     printf("Enter transaction amount or 0 to cancel: ");
-    //     if (scanf("%f", &trans.amount) != 1) {
-    //         printf("Invalid input. Please enter a valid number.\n");
-    //         while (getchar() != '\n');
-    //         continue;
-    //     }
-    //     while (getchar() != '\n');
-
-    //     if (trans.amount == 0) {
-    //         printf("Transaction cancelled.\n");
-    //         return;
-    //     }
-
-    //     if (trans.amount > 0)
-    //         break;
-
-    //     printf("Transaction amount must be greater than zero.\n");
-    // }
 
     do {
         printf("Enter transaction amount or 0 to cancel: ");
@@ -148,8 +128,9 @@ void transaction() {
         
     } while (trans.amount < 0);
 
+    clear_input_buffer();
     do {
-        printf("\nConfirm to continue with the transaction? (Y/N): ");
+        printf("\nProceed with this transaction? (Y/N): ");
         confirm = getchar();
         while (getchar() != '\n');
         if (confirm != 'Y' && confirm != 'y' && confirm != 'N' && confirm != 'n') {
