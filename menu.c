@@ -31,7 +31,7 @@ void main_menu(void) {
                 display_list();
                 break;
             case 3:
-                month_report();
+                reports();
                 break;
             case 4:
                 edit_menu();
@@ -73,6 +73,31 @@ void edit_menu(void) {
                 break;
             case 4:
                 display();
+                break;
+            case 0:
+                return;
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    } while (choice != 0);
+}
+
+
+void reports(void) {
+    int choice;
+    do {
+        printf("\n==== REPORTS MENU ====\n");
+        printf("1. Display Account\n");
+        printf("2. Monthly Report\n");
+        printf("0. Back to Main Menu\n");
+        printf("Select an option: ");
+        scanf("%d", &choice);
+        switch (choice) {
+            case 1:
+                display_account();
+                break;
+            case 2:
+                month_report();
                 break;
             case 0:
                 return;
