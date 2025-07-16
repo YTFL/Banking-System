@@ -63,16 +63,15 @@ void new_account(void)  {
             if(dup == 0)
             {
             printf("\nAn account already exists with the same name and address.\n");
+            dup = 1;
             }
            printf("Account number: %ld\n", copy.acc_no);
-           dup = 1;
         }
     }
     fclose(fp);
     
           if(dup)
            {
-            char confirm;
             do 
             {
                 printf("Do you still want to create a new account? (Y/N): ");
