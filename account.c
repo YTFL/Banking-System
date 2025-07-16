@@ -141,7 +141,7 @@ void new_account(void)  {
     printf("\nAccount created successfully!\n");
     printf("Account Number : %ld\n", acc.acc_no);
     printf("Balance        : %.2f\n", acc.balance);
-    printf("An initial transaction has been recorded in BANKING.dat\n");
+    printf("An initial transaction of %.2f has been added.\n", acc.balance);
 }
 
 
@@ -240,21 +240,28 @@ int found_account(FILE *fp, int acc_no) {
 
 void modify_account(int choice) {
     long int acc_no;
-    printf("Enter account number to modify or enter 0 to go back: ");
-    scanf("%ld", &acc_no);
-    if (acc_no == 0) return;
-    clear_input_buffer();
 
     FILE *fp = fopen("INITIAL.dat", "rb+");
     if (!fp) {
         printf("Could not open file.\n");
         return;
     }
-    if (!found_account(fp, acc_no)) {
-        printf("Account not found.\n");
-        fclose(fp);
-        return;
+
+    while (1) {
+        printf("Enter account number or enter 0 to go back: ");
+        scanf("%ld", &acc_no);
+        clear_input_buffer(); 
+        if (found_account(fp, acc_no)) {
+            break;
+        } else if (acc_no == 0) {
+            fclose(fp);
+            return;
+        } else {
+            printf("Account not found. Please try again.\n");
+            rewind(fp);  
+        }
     }
+
     rewind(fp);
     initial acc;
     long pos;
@@ -327,19 +334,22 @@ void delete_account() {
         printf("Cannot open file");
         return;
     }
-    printf("Enter account number you want to delete or press 0 to go back: ");
-    scanf("%ld",&acc_no);
-    clear_input_buffer();
-    if (acc_no == 0) {
-        fclose(fp);
-        return;
+    
+    while (1) {
+        printf("Enter account number or enter 0 to go back: ");
+        scanf("%ld", &acc_no);
+        clear_input_buffer(); 
+        if (found_account(fp, acc_no)) {
+            break;
+        } else if (acc_no == 0) {
+            fclose(fp);
+            return;
+        } else {
+            printf("Account not found. Please try again.\n");
+            rewind(fp);  
+        }
     }
 
-    if (!found_account(fp, acc_no)) {
-        printf("Account not found.\n");
-        fclose(fp);
-        return;
-    }
     char confirm;
     do {
         printf("\nConfirm to delete your account? (Y/N): ");
