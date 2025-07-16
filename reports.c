@@ -122,6 +122,10 @@ void month_report()
     long int accno;
     int ch;
 
+    time_t now = time(NULL);
+    struct tm *local = localtime(&now);
+    date today = {local->tm_mday, local->tm_mon + 1, local->tm_year + 1900};
+
     printf("Enter account number: ");
     scanf("%ld", &accno);
     clear_input_buffer();
@@ -155,8 +159,8 @@ void month_report()
         }
         if (!is_valid_date(from_date))
         {
-             if (from_date.year > 2025) {
-                 printf("Error: Year beyond 2025 is not supported.\nPlease enter a real date : ");
+             if (from_date.year > today.year || from_date.day > today.day || from_date.month > today.month) {
+                 printf("Error: Date beyond current date is not supported.\nPlease enter a real date : ");
                  continue;
             }
             else if (from_date.year < 1900) {
@@ -182,8 +186,8 @@ void month_report()
         }
         if (!is_valid_date(to_date))
         {
-             if (to_date.year > 2025) {
-                 printf("Error: Year beyond 2025 is not supported.\nPlease enter a real date : ");
+             if (to_date.year > today.year || to_date.day > today.day || to_date.month > today.month) {
+                 printf("Error: Date beyond current date is not supported.\nPlease enter a real date : ");
                  continue;
             }
             else if (to_date.year < 1900) {
@@ -216,24 +220,33 @@ void month_report()
         fclose(fp);
         return;
     }
+
+        rewind(fp);  // Ensure you're at the beginning
+
+    while (fread(&acc, sizeof(initial), 1, fp)) {
+        if (acc.acc_no == accno) {
+            strcpy(name, acc.name);
+            break;
+        }
+    }
+
     date creation_date = {0};  // To store the first transaction date (account creation)
     int creation_date_found = 0;
 
    banking first_transaction;
 
+
 rewind(bank_fp);
-while (fread(&t, sizeof(banking), 1, bank_fp)) {
+while (fread(&t, sizeof(banking), 1, bank_fp)) //to detect first transaction aka creation date and amount aka opening deposit amount
+{
     if (t.acc_no == accno) {
         if (!creation_date_found || isEarlier(t.date, first_transaction.date)) {
             first_transaction = t;
             creation_date_found = 1;
-            strcpy(name, acc.name);
         }
     }
 }
 creation_date = first_transaction.date;
-
-
 
     float total_deposit = 0, total_withdraw = 0;// initialize totals
     float opening_balance = 0;
@@ -317,7 +330,7 @@ creation_date = first_transaction.date;
 
     if (transaction_count == 0)
     {
-        printf("|             No transactions found in this date range.                |\n");
+        printf("|   No transactions found in this date range.                          |\n");
         printf("+============+==============+=============+============+===============+\n");
     }
     else
