@@ -48,36 +48,50 @@ void new_account(void)  {
     } while (strlen(acc.address) == 0);
 
     FILE *fp = fopen("INITIAL.dat", "rb");
-    if (fp == NULL) {
+    if (fp == NULL)
+    {
         printf("Error opening INITIAL.dat\n");
         return;
     }
   
     initial copy;
-    while (fread(&copy, sizeof(initial), 1, fp) == 1) {
+    int dup = 0;
+    while (fread(&copy, sizeof(initial), 1, fp) == 1) 
+    {
         if (strcmp(copy.name, acc.name) == 0 && strcmp(copy.address, acc.address) == 0) 
         {
+            if(dup == 0)
+            {
             printf("\nAn account already exists with the same name and address.\n");
-            printf("Account number: %ld\n", copy.acc_no);
-            do {
-                printf("Do u still want to create a new account? (Y/N): ");
-                confirm = getchar();
-                while (getchar() != '\n');
-
-                if (confirm == 'Y' || confirm == 'y') {
-                    break;
-                } else if (confirm == 'N' || confirm == 'n') {
-                    fclose(fp);
-                    printf("Account creation cancelled.\n");
-                    return;
-                } else {
-                    printf("Invalid input. Please enter Y or N.\n");
-                }
-            } while (1);
-            break; 
+            }
+           printf("Account number: %ld\n", copy.acc_no);
+           dup = 1;
         }
     }
     fclose(fp);
+    
+          if(dup)
+           {
+            char confirm;
+            do 
+            {
+                printf("Do you still want to create a new account? (Y/N): ");
+                confirm = getchar();
+                while (getchar() != '\n');
+
+                if (confirm == 'Y' || confirm == 'y')
+                {
+                    break;
+                } else if (confirm == 'N' || confirm == 'n')
+                {
+                    printf("Account creation cancelled.\n");
+                    return;
+                } else
+                {
+                    printf("Invalid input. Please enter Y or N.\n");
+                }
+            } while (1); 
+           }
 
     char input[100];
 
