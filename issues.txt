@@ -1,3 +1,2 @@
-2. No cancel option mid-function: Once a function starts for report, there's no way to go back without completing it.
-5. Monthly report balance: doesn’t show the proper transactions and balance.
-12. No check for exact duplicate name and address: If the user enters a name and address that exactly match an existing account, the system doesn’t notify them or allow them to retrieve the old account, potentially leading to unnecessary duplicate accounts.
+1. No cancel option mid-function: Once a function starts for report, there's no way to go back without completing it.
+2. Name not being displayed in reports: The name of the customer is not being displayed in the reports.

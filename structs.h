@@ -23,7 +23,6 @@ typedef struct {
     float interest;
     float amount;
     float balance;
-    char remarks[100];
 } banking;
 
 

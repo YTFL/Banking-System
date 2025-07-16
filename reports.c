@@ -317,7 +317,7 @@ creation_date = first_transaction.date;
 
     if (transaction_count == 0)
     {
-        printf("|   No transactions found in this date range.                        |\n");
+        printf("|             No transactions found in this date range.                |\n");
         printf("+============+==============+=============+============+===============+\n");
     }
     else

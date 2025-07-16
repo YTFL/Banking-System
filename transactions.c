@@ -49,19 +49,18 @@ void transaction() {
 
     // Confirm with Y/N loop
     char confirm;
-    while (1) {
-        printf("Proceed with this account? (Y/N): ");
-        scanf(" %c", &confirm);
-        while ((getchar()) != '\n');
-
-        if (confirm == 'Y' || confirm == 'y') {
-            break;
-        } else if (confirm == 'N' || confirm == 'n') {
-            printf("Transaction cancelled.\n");
-            return;
-        } else {
+    do {
+        printf("\nProceed with this account? (Y/N): ");
+        confirm = getchar();
+        while (getchar() != '\n');
+        if (confirm != 'Y' && confirm != 'y' && confirm != 'N' && confirm != 'n') {
             printf("Invalid input. Please enter Y or N.\n");
         }
+    } while (confirm != 'Y' && confirm != 'y' && confirm != 'N' && confirm != 'n');
+
+    if (confirm == 'N' || confirm == 'n') {
+        printf("Transaction cancelled.\n");
+        return;
     }
 
     // transaction type loop
@@ -105,24 +104,54 @@ void transaction() {
     }
 
     // amount loop
-    while (1) {
+    // while (1) {
+    //     printf("Enter transaction amount or 0 to cancel: ");
+    //     if (scanf("%f", &trans.amount) != 1) {
+    //         printf("Invalid input. Please enter a valid number.\n");
+    //         while (getchar() != '\n');
+    //         continue;
+    //     }
+    //     while (getchar() != '\n');
+
+    //     if (trans.amount == 0) {
+    //         printf("Transaction cancelled.\n");
+    //         return;
+    //     }
+
+    //     if (trans.amount > 0)
+    //         break;
+
+    //     printf("Transaction amount must be greater than zero.\n");
+    // }
+
+    do {
         printf("Enter transaction amount or 0 to cancel: ");
         if (scanf("%f", &trans.amount) != 1) {
             printf("Invalid input. Please enter a valid number.\n");
             while (getchar() != '\n');
             continue;
         }
-        while (getchar() != '\n');
-
         if (trans.amount == 0) {
             printf("Transaction cancelled.\n");
             return;
+        } else if (trans.amount < 0) {
+            printf("Transaction amount must be greater than or equal to zero.\n");
         }
+        
+    } while (trans.amount < 0);
 
-        if (trans.amount > 0)
-            break;
+    do {
+        printf("\nConfirm to continue with the transaction? (Y/N): ");
+        confirm = getchar();
+        while (getchar() != '\n');
+        if (confirm != 'Y' && confirm != 'y' && confirm != 'N' && confirm != 'n') {
+            printf("Invalid input. Please enter Y or N.\n");
+        }
+    } while (confirm != 'Y' && confirm != 'y' && confirm != 'N' && confirm != 'n');
 
-        printf("Transaction amount must be greater than zero.\n");
+    if (confirm == 'N' || confirm == 'n') {
+        printf("Transaction cancelled.\n");
+        return;
     }
 
     // fill date
@@ -140,8 +169,7 @@ void transaction() {
         if (acc.balance <= 500) {
             printf("Transaction rejected. Account balance is already at or below the minimum required balance of 500.\n");
             return;
-        }
-        if (trans.amount > acc.balance) {
+        } else if (trans.amount > acc.balance) {
             printf("Insufficient balance.\n");
             return;
         }
@@ -151,7 +179,6 @@ void transaction() {
     }
 
     trans.balance = acc.balance;
-    strcpy(trans.remarks, "");
 
     update_balance(acc);
     add_to_file_transaction(trans);

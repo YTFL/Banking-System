@@ -139,7 +139,6 @@ void new_account(void)  {
     trans.date.day = local->tm_mday;
     trans.date.month = local->tm_mon + 1;
     trans.date.year = local->tm_year + 1900;
-    strcpy(trans.remarks, "Initial deposit");
 
     add_to_file_transaction(trans);
 
@@ -313,7 +312,7 @@ void modify_account(int choice) {
     } while (confirm != 'Y' && confirm != 'y' && confirm != 'N' && confirm != 'n');
 
     if (confirm == 'N' || confirm == 'n') {
-        printf("Account creation cancelled.\n");
+        printf("Account Changes cancelled.\n");
         return;
     }
     modify(fp, pos, &acc);
