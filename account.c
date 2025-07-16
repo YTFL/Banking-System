@@ -102,7 +102,6 @@ void new_account(void)  {
 
     } while (acc.balance < 500 || acc.balance > 999999999.99);
 
-
     printf("\nPlease review your details:\n");
     printf("Account Number : %ld\n", acc.acc_no);
     printf("Name           : %s\n", acc.name);
@@ -334,7 +333,7 @@ void delete_account() {
         printf("Cannot open file");
         return;
     }
-    
+
     while (1) {
         printf("Enter account number or enter 0 to go back: ");
         scanf("%ld", &acc_no);
