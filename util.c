@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "structs.h"
+#include<time.h>
 
 void clear() {
     system("cls");
@@ -66,6 +67,13 @@ int is_valid_date(date d) {
 
     int max_days = getMonthDays(d.month, d.year);
     if (d.day < 1 || d.day > max_days)
+        return 0;
+      // Assuming curremt year is the upper limit
+       time_t now = time(NULL);
+    struct tm *local = localtime(&now);
+    int current_year = local->tm_year + 1900;
+
+    if (d.year < 1900 || d.year > current_year)
         return 0;
 
     return 1;
