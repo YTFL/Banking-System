@@ -6,6 +6,7 @@
 #include "structs.h"
 #include "transactions.h"
 #include "account.h"
+#include "util.h"
 
 void transaction() {
     FILE *fp_initial;
@@ -16,21 +17,28 @@ void transaction() {
 
     // keep asking for valid account number
     while (1) {
-        printf("Enter account number: ");
-        scanf("%ld", &acc_no);
-        while (getchar() != '\n');
-
         fp_initial = fopen("INITIAL.dat", "rb");
         if (fp_initial == NULL) {
             printf("Error opening account file.\n");
             return;
         }
+        long int accno;
 
-        if (!found_account(fp_initial, acc_no)){
-            printf("Account not found. Please try again.\n");
-            fclose(fp_initial);
-            continue;
+        while (1) {
+            printf("Enter account number or enter 0 to go back: ");
+            scanf("%ld", &acc_no);
+            clear_input_buffer(); 
+            if (found_account(fp_initial, acc_no)) {
+                break;
+            } else if (accno == 0) {
+                fclose(fp_initial);
+                return;
+            } else {
+                printf("Account not found. Please try again.\n");
+                rewind(fp_initial);  
+            }
         }
+
 
         // load the account details
         rewind(fp_initial);
