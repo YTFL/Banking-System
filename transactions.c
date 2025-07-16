@@ -1,6 +1,6 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include <ctype.h>
 #include "structs.h"
@@ -13,18 +13,12 @@ void transaction() {
     banking trans;
 
     long int acc_no;
-    int found = 0;
 
     // keep asking for valid account number
     while (1) {
-        printf("Enter account number (or 0 to cancel): ");
+        printf("Enter account number: ");
         scanf("%ld", &acc_no);
         while (getchar() != '\n');
-
-        if (acc_no == 0) {
-            printf("Transaction cancelled.\n");
-            return;
-        }
 
         fp_initial = fopen("INITIAL.dat", "rb");
         if (fp_initial == NULL) {
@@ -32,32 +26,42 @@ void transaction() {
             return;
         }
 
-        // search account
+        if (!found_account(fp_initial, acc_no)){
+            printf("Account not found. Please try again.\n");
+            fclose(fp_initial);
+            continue;
+        }
+
+        // load the account details
+        rewind(fp_initial);
         while (fread(&acc, sizeof(acc), 1, fp_initial)) {
             if (acc.acc_no == acc_no) {
-                found = 1;
                 break;
             }
         }
-        fclose(fp_initial);
 
-        if (!found) {
-            printf("Account not found. Please try again.\n");
-        } else {
-            break;
-        }
+        fclose(fp_initial);
+        break; 
     }
 
-    printf("\nAccount holder: %s\n", acc.name);
+    printf("Account holder: %s\n", acc.name);
     printf("Current balance: %.2f\n", acc.balance);
 
-    // Confirm correct account
-    printf("Proceed with this account? (Y/N): ");
-    char confirm = getchar();
-    while (getchar() != '\n');
-    if (confirm != 'Y' && confirm != 'y') {
-        printf("Transaction cancelled.\n");
-        return;
+    // Confirm with Y/N loop
+    char confirm;
+    while (1) {
+        printf("Proceed with this account? (Y/N): ");
+        scanf(" %c", &confirm);
+        while ((getchar()) != '\n');
+
+        if (confirm == 'Y' || confirm == 'y') {
+            break;
+        } else if (confirm == 'N' || confirm == 'n') {
+            printf("Transaction cancelled.\n");
+            return;
+        } else {
+            printf("Invalid input. Please enter Y or N.\n");
+        }
     }
 
     // transaction type loop
@@ -77,7 +81,7 @@ void transaction() {
         if (strcmp(trans.trans, "withdraw") == 0 || strcmp(trans.trans, "deposit") == 0)
             break;
 
-        printf("Invalid transaction type.\n");
+        printf("Invalid transaction type. Please enter 'Deposit' or 'Withdraw'.\n");
     }
 
     // mode loop
@@ -97,10 +101,10 @@ void transaction() {
         if (strcmp(trans.type, "cash") == 0 || strcmp(trans.type, "cheque") == 0)
             break;
 
-        printf("Invalid mode.\n");
+        printf("Invalid mode. Please enter 'cash' or 'cheque'.\n");
     }
 
-    // amount input with option to retry
+    // amount loop
     while (1) {
         printf("Enter transaction amount or 0 to cancel: ");
         if (scanf("%f", &trans.amount) != 1) {
@@ -121,36 +125,20 @@ void transaction() {
         printf("Transaction amount must be greater than zero.\n");
     }
 
-    // fill date and static values
+    // fill date
     time_t now = time(NULL);
     struct tm *local = localtime(&now);
-    trans.acc_no = acc.acc_no;
-    trans.interest = 0;
     trans.date.day = local->tm_mday;
     trans.date.month = local->tm_mon + 1;
     trans.date.year = local->tm_year + 1900;
 
-    // Preview summary
-    printf("\nPlease review your transaction:\n");
-    printf("Account Number : %ld\n", acc.acc_no);
-    printf("Account Holder : %s\n", acc.name);
-    printf("Transaction    : %s\n", trans.trans);
-    printf("Mode           : %s\n", trans.type);
-    printf("Amount         : %.2f\n", trans.amount);
-    printf("Current Balance: %.2f\n", acc.balance);
-
-    printf("\nProceed with this transaction? (Y/N): ");
-    confirm = getchar();
-    while (getchar() != '\n');
-    if (confirm != 'Y' && confirm != 'y') {
-        printf("Transaction cancelled.\n");
-        return;
-    }
+    trans.acc_no = acc.acc_no;
+    trans.interest = 0;
 
     // process
     if (strcmp(trans.trans, "withdraw") == 0) {
         if (acc.balance <= 500) {
-            printf("Transaction rejected. Account balance is already at or below minimum required 500.\n");
+            printf("Transaction rejected. Account balance is already at or below the minimum required balance of 500.\n");
             return;
         }
         if (trans.amount > acc.balance) {
@@ -163,13 +151,13 @@ void transaction() {
     }
 
     trans.balance = acc.balance;
+    strcpy(trans.remarks, "");
 
     update_balance(acc);
     add_to_file_transaction(trans);
 
     printf("Transaction successful. Updated balance: %.2f\n", acc.balance);
 }
-
 
 void update_balance(initial acc) {
     FILE *fp = fopen("INITIAL.dat", "r+b");
@@ -210,7 +198,6 @@ float give_balance(long int acc_no) {
     return 0.0;
 }
 
-
 void add_to_file_transaction(banking trans) {
     FILE *fp = fopen("BANKING.dat", "ab");
     if (fp == NULL) {
@@ -220,3 +207,4 @@ void add_to_file_transaction(banking trans) {
     fwrite(&trans, sizeof(trans), 1, fp);
     fclose(fp);
 }
+
