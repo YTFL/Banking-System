@@ -80,22 +80,73 @@ void new_account(void)  {
     }
     fclose(fp);
     
-    if(dup) {
-        do {
-            printf("Do you still want to create a new account? (Y/N): ");
-            confirm = getchar();
-            while (getchar() != '\n');
+    if(dup) 
+    {
+     char yes_no_input[10];
+char yes_no_character_confirm = 'Y';  // Default to 'Y' so it's safe outside the block
 
-            if (confirm == 'Y' || confirm == 'y') {
-                break;
-            } else if (confirm == 'N' || confirm == 'n') {
-                printf("Account creation cancelled.\n");
-                return;
-            } else {
-                printf("Invalid input. Please enter Y or N.\n");
-            }
-        } while (1); 
+FILE *fp = fopen("INITIAL.dat", "rb");
+if (fp == NULL)
+{
+    fp = fopen("INITIAL.dat", "wb");
+    if (fp == NULL) {
+        printf("Error: Could not create INITIAL.dat\n");
+        return;
     }
+    fclose(fp);
+    fp = fopen("INITIAL.dat", "rb");
+    if (fp == NULL)
+    {
+        printf("Error: Could not reopen INITIAL.dat\n");
+        return;
+    }
+}
+
+initial copy;
+int dup = 0;
+while (fread(&copy, sizeof(initial), 1, fp) == 1) {
+    if (strcmp(copy.name, acc.name) == 0 && strcmp(copy.address, acc.address) == 0) 
+    {
+        if (dup == 0)
+        {
+            printf("\nAn account already exists with the same name and address.\n");
+            dup = 1;
+        }
+        printf("Account number: %ld\n", copy.acc_no);
+    }
+}
+fclose(fp);
+
+if (dup) 
+{
+    do
+    {
+        printf("\nProceed with this account? (Y/N): ");
+        if (fgets(yes_no_input, sizeof(yes_no_input), stdin) == NULL)
+        {
+            printf("Input error.\n");
+            return;
+        }
+        if (strlen(yes_no_input) == 2 &&
+            (yes_no_input[0] == 'Y' || yes_no_input[0] == 'y' ||
+             yes_no_input[0] == 'N' || yes_no_input[0] == 'n') &&
+            yes_no_input[1] == '\n') 
+        {
+            yes_no_character_confirm = yes_no_input[0];
+            break;
+        } 
+        else
+        {
+            printf("Invalid input. Please enter only Y or N.\n");
+        }
+    } while (1);
+}
+
+if (dup && (yes_no_character_confirm == 'N' || yes_no_character_confirm == 'n'))
+{
+    printf("Account creation cancelled.\n");
+    return;
+}
 
     char input[100];
 
