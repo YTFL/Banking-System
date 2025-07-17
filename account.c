@@ -352,12 +352,14 @@ void modify_account(int choice) {
 void delete_account() {
     long int acc_no;
     FILE *fp = fopen("INITIAL.dat","rb");
-    if(fp == NULL) {
+    if(fp == NULL) 
+    {
         printf("Cannot open file");
         return;
     }
 
-    while (1) {
+    while (1)
+    {
         printf("Enter account number or enter 0 to go back: ");
         scanf("%ld", &acc_no);
         clear_input_buffer(); 
@@ -371,6 +373,31 @@ void delete_account() {
             rewind(fp);  
         }
     }
+    initial acc;
+    int found = 0;
+    while (fread(&acc, sizeof(acc), 1, fp))
+    {
+        if (acc.acc_no == acc_no) 
+        {
+            found = 1;
+            break;
+        }
+    }
+    fclose(fp);
+
+    if (!found) 
+    {
+        printf("Account not found.\n");
+        return;
+    }
+
+    if (acc.balance > 0)
+    {
+        printf("Cannot delete this account. Balance is not zero ");
+        printf("Please withdraw the remaining balance before deleting the account.\n");
+        return;
+    }
+
 
     char confirm;
     do {
@@ -387,7 +414,14 @@ void delete_account() {
             printf("Invalid input. Please enter Y or N.\n");
         }
     } while (1);
-    rewind(fp);
+
+     fp = fopen("INITIAL.dat", "rb");
+    if (fp == NULL)
+    {
+        printf("Error reopening file.\n");
+        return;
+    }
+    
     FILE *temp = fopen("temp.dat","wb");
     if (temp == NULL) {
         printf("Cannot open file");
@@ -395,7 +429,6 @@ void delete_account() {
         return;
     }
     
-    initial acc;
     while(fread(&acc, sizeof(acc), 1, fp)) {
         if(acc.acc_no == acc_no) continue;
         fwrite(&acc, sizeof(acc), 1 , temp);
