@@ -81,9 +81,9 @@ void new_account(void)  {
     }
 
     char input[100];
-
     double amount;
     long long paise;
+
     do {
         printf("Enter Initial deposit (>= 500): ");
 
@@ -99,13 +99,21 @@ void new_account(void)  {
             continue;
         }
 
-        paise = (long long)(round(amount * 100));
+        char *dot = strchr(input, '.');
+        if (dot != NULL && strlen(dot + 1) > 2) {
+            dot[3] = '\0';
+            printf("Invalid input. Please enter a value with at most two decimal places.\n");
+            continue;;
+        }
+
+        paise = (long long)(amount * 100);
 
         if (paise < 50000 || paise > MAX_AMOUNT) {
             printf("The Minimum initial deposit is 500 and less than 1 Crore.\n");
         }
 
     } while (paise < 50000 || paise > MAX_AMOUNT);
+
     acc.balance = paise;
 
     printf("\nPlease review your details:\n");

@@ -108,33 +108,50 @@ void transaction() {
         printf("Invalid mode. Please enter 'cash' or 'cheque'.\n");
     }
 
+    char input[100];
     double amount;
     long long paise;
+
     do {
         printf("Enter transaction amount or 0 to cancel: ");
-        if (scanf("%lf", &amount) != 1) {
-            printf("Invalid input. Please enter a valid number.\n");
-            clear_input_buffer();
+        
+        if (!fgets(input, sizeof(input), stdin)) {
+            printf("Error reading input.\n");
             continue;
         }
 
-        if (amount == 0) {
+        input[strcspn(input, "\n")] = '\0';
+
+        if (strcasecmp(input, "0") == 0 || strcasecmp(input, "0.00") == 0) {
             printf("Transaction cancelled.\n");
             return;
         }
-        
-        paise = (long long)round(amount * 100);
 
-        if (paise <= 0 || paise > MAX_AMOUNT) {
-            printf("Transaction amount must be greater than zero and less 1 Crore.\n");
+        if (sscanf(input, "%lf", &amount) != 1) {
+            printf("Invalid input. Please enter a valid number.\n");
             continue;
         }
+
+        char *dot = strchr(input, '.');
+        if (dot != NULL && strlen(dot + 1) > 2) {
+            dot[3] = '\0';
+            printf("Invalid input. Please enter a value with at most two decimal places.\n");
+            continue;
+        }
+
+        paise = (long long)(amount * 100);
+
+        if (paise <= 0 || paise > MAX_AMOUNT) {
+            printf("Transaction amount must be greater than zero and less than 1 Crore.\n");
+            continue;
+        }
+
         trans.amount = paise;
         break;
 
     } while (1);
 
-    clear_input_buffer();
+
     while (1) {
         printf("\nContinue with this transaction? (Y/N): ");
         if (!fgets(confirm, sizeof(confirm), stdin)) {
