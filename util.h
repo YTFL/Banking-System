@@ -9,5 +9,6 @@ int no_of_days(date d1, date d2);
 int isEarlier(date d1, date d2);
 int is_valid_date(date d);
 void clear_input_buffer();
+void get_input(char *output, int max_len, const char *prompt, const char *field_name);
 
 #endif

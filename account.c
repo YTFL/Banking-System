@@ -18,35 +18,8 @@ void new_account(void)  {
     printf("\n----- Open New Account -----\n");
     acc.acc_no = last_accno() + 1;
 
-    do {
-        printf("\nEnter Name: ");
-        fgets(acc.name, sizeof(acc.name), stdin);
-
-        if (!strchr(acc.name, '\n')) {
-            clear_input_buffer();
-        }
-
-        acc.name[strcspn(acc.name, "\n")] = '\0';
-
-        if (strlen(acc.name) == 0) {
-            printf("Name cannot be empty.\n");
-        }
-    } while (strlen(acc.name) == 0);
-
-    do {
-        printf("Enter Address: ");
-        fgets(acc.address, sizeof(acc.address), stdin);
-
-        if (!strchr(acc.address, '\n')) {
-            clear_input_buffer();
-        }
-
-        acc.address[strcspn(acc.address, "\n")] = '\0';
-
-        if (strlen(acc.address) == 0) {
-            printf("Address cannot be empty.\n");
-        }
-    } while (strlen(acc.address) == 0);
+    get_input(acc.name, 20, "\nEnter Name (20 Characters): ", "Name");
+    get_input(acc.address, 50, "\nEnter Address (50 Characters): ", "Address");
 
     FILE *fp = fopen("INITIAL.dat", "rb");
     if (fp == NULL)
@@ -69,7 +42,7 @@ void new_account(void)  {
     
     int dup = 0;
     while (fread(&copy, sizeof(initial), 1, fp) == 1) {
-        if (strcmp(copy.name, acc.name) == 0 && strcmp(copy.address, acc.address) == 0) 
+        if (strcasecmp(copy.name, acc.name) == 0 && strcasecmp(copy.address, acc.address) == 0) 
         {
             if(dup == 0)
             {
@@ -305,35 +278,9 @@ void modify_account(int choice) {
         }
     }
     if (choice == 1) {
-        do {
-        printf("\nEnter Name: ");
-        fgets(acc.name, sizeof(acc.name), stdin);
-
-        if (!strchr(acc.name, '\n')) {
-            clear_input_buffer();
-        }
-
-        acc.name[strcspn(acc.name, "\n")] = '\0';
-
-        if (strlen(acc.name) == 0) {
-            printf("Name cannot be empty.\n");
-        }
-    } while (strlen(acc.name) == 0);
+        get_input(acc.name, 20, "\nEnter new Name (20 characters max): ", "Name");
     } else if (choice == 2) {
-        do {
-            printf("Enter Address: ");
-            fgets(acc.address, sizeof(acc.address), stdin);
-
-            if (!strchr(acc.address, '\n')) {
-                clear_input_buffer();
-            }
-
-            acc.address[strcspn(acc.address, "\n")] = '\0';
-
-            if (strlen(acc.address) == 0) {
-                printf("Address cannot be empty.\n");
-            }
-        } while (strlen(acc.address) == 0);
+        get_input(acc.address, 50, "\nEnter new Address (50 characters max): ", "Address");
     }
     printf("\nReview updated details:\n");
     printf("Account Number : %ld\n", acc.acc_no);
@@ -343,7 +290,7 @@ void modify_account(int choice) {
 
     char confirm[3];
     while (1) {
-        printf("\nConfirm to create new account? (Y/N): ");
+        printf("\nConfirm changes to account? (Y/N): ");
         if (!fgets(confirm, sizeof(confirm), stdin)) {
             printf("Input error.\n");
             continue;
@@ -354,7 +301,7 @@ void modify_account(int choice) {
         if (strcasecmp(confirm, "Y") == 0) {
             break;
         } else if (strcasecmp(confirm, "N") == 0) {
-            printf("Account creation cancelled.\n");
+            printf("Account details change cancelled.\n");
             return;
         } else {
             printf("Invalid input. Please enter Y or N.\n");

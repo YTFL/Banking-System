@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "structs.h"
 #include<time.h>
+#include <ctype.h>
+#include <string.h>
+#include "util.h"
+#include "structs.h"
 
 void clear() {
     system("cls");
@@ -61,6 +64,7 @@ int no_of_days(date d1, date d2) {
 
     return days;
 }
+
 int is_valid_date(date d) {
     if (d.year < 1900 || d.month < 1 || d.month > 12)
         return 0;
@@ -68,7 +72,6 @@ int is_valid_date(date d) {
     int max_days = getMonthDays(d.month, d.year);
     if (d.day < 1 || d.day > max_days)
         return 0;
-      // Assuming curremt year is the upper limit
        time_t now = time(NULL);
     struct tm *local = localtime(&now);
     int current_year = local->tm_year + 1900;
@@ -82,4 +85,58 @@ int is_valid_date(date d) {
 void clear_input_buffer() {
     int ch;
     while ((ch = getchar()) != '\n' && ch != EOF);
+}
+
+void get_input(char *output, int max_len, const char *prompt, const char *field_name) {
+    char buffer[200];
+    int valid = 0;
+
+    while (!valid) {
+        int i = 0, j = 0, in_word = 0;
+        int truncated = 0;
+
+        printf("%s", prompt);
+        fgets(buffer, sizeof(buffer), stdin);
+
+        if (!strchr(buffer, '\n')) {
+            clear_input_buffer();
+        }
+
+        buffer[strcspn(buffer, "\n")] = '\0';
+
+        while (isspace(buffer[i])) i++;
+
+        while (buffer[i] != '\0') {
+            if (isspace(buffer[i])) {
+                if (in_word) {
+                    output[j++] = ' ';
+                    in_word = 0;
+                }
+            } else {
+                output[j++] = buffer[i];
+                in_word = 1;
+            }
+
+            if (j == max_len) {
+                truncated = 1;
+                break;
+            }
+
+            i++;
+        }
+
+        if (j > 0 && output[j - 1] == ' ')
+            j--;
+
+        output[j] = '\0';
+
+        if (strlen(output) == 0) {
+            printf("%s cannot be empty.\n", field_name);
+        } else {
+            valid = 1;
+            if (truncated) {
+                printf("Warning: %s has been truncated to %d characters: \"%s\"\n", field_name, max_len, output);
+            }
+        }
+    }
 }
