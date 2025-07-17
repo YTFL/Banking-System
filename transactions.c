@@ -55,19 +55,25 @@ void transaction() {
     printf("Current balance: %.2f\n", acc.balance/100.0);
 
     // Confirm with Y/N loop
-    char confirm;
-    do {
-        printf("\nProceed with this account? (Y/N): ");
-        confirm = getchar();
-        while (getchar() != '\n');
-        if (confirm != 'Y' && confirm != 'y' && confirm != 'N' && confirm != 'n') {
-            printf("Invalid input. Please enter Y or N.\n");
+    char confirm[3];
+    while (1) {
+        printf("\nContinue with this account? (Y/N): ");
+        if (!fgets(confirm, sizeof(confirm), stdin)) {
+            printf("Input error.\n");
+            continue;
         }
-    } while (confirm != 'Y' && confirm != 'y' && confirm != 'N' && confirm != 'n');
 
-    if (confirm == 'N' || confirm == 'n') {
-        printf("Transaction cancelled.\n");
-        return;
+        confirm[strcspn(confirm, "\n")] = '\0';
+
+        if (strcasecmp(confirm, "Y") == 0) {
+            break;
+        } else if (strcasecmp(confirm, "N") == 0) {
+            printf("Transaction cancelled.\n");
+            return;
+        } else {
+            printf("Invalid input. Please enter Y or N.\n");
+            clear_input_buffer();
+        }
     }
 
     // transaction type loop
@@ -132,18 +138,24 @@ void transaction() {
 
 
     clear_input_buffer();
-    do {
-        printf("\nProceed with this transaction? (Y/N): ");
-        confirm = getchar();
-        while (getchar() != '\n');
-        if (confirm != 'Y' && confirm != 'y' && confirm != 'N' && confirm != 'n') {
-            printf("Invalid input. Please enter Y or N.\n");
+    while (1) {
+        printf("\nProceed with the transaction? (Y/N): ");
+        if (!fgets(confirm, sizeof(confirm), stdin)) {
+            printf("Input error.\n");
+            continue;
         }
-    } while (confirm != 'Y' && confirm != 'y' && confirm != 'N' && confirm != 'n');
 
-    if (confirm == 'N' || confirm == 'n') {
-        printf("Transaction cancelled.\n");
-        return;
+        confirm[strcspn(confirm, "\n")] = '\0';
+
+        if (strcasecmp(confirm, "Y") == 0) {
+            break;
+        } else if (strcasecmp(confirm, "N") == 0) {
+            printf("Transaction cancelled.\n");
+            return;
+        } else {
+            printf("Invalid input. Please enter Y or N.\n");
+            clear_input_buffer();
+        }
     }
 
     // fill date
