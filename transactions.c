@@ -14,15 +14,14 @@ void transaction() {
     banking trans;
 
     long int acc_no;
-
-    // keep asking for valid account number
-    while (1) {
-        fp_initial = fopen("INITIAL.dat", "rb");
+    fp_initial = fopen("INITIAL.dat", "rb");
         if (fp_initial == NULL) {
             printf("Error opening account file.\n");
             return;
         }
 
+    // keep asking for valid account number
+    while (1) {
         while (1) {
             printf("Enter account number or enter 0 to go back: ");
             scanf("%ld", &acc_no);
@@ -54,7 +53,7 @@ void transaction() {
     printf("Account holder: %s\n", acc.name);
     printf("Current balance: %.2f\n", acc.balance/100.0);
 
-    // Confirm with Y/N loop
+    clear_input_buffer();
     char confirm[3];
     while (1) {
         printf("\nContinue with this account? (Y/N): ");
@@ -135,7 +134,6 @@ void transaction() {
         break;
 
     } while (1);
-
 
     clear_input_buffer();
     while (1) {

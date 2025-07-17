@@ -65,22 +65,24 @@ int no_of_days(date d1, date d2) {
     return days;
 }
 
-int is_valid_date(date d) {
-    if (d.year < 1900 || d.month < 1 || d.month > 12)
+int is_valid_date(int month, int year) {
+    if (month < 1 || month > 12)
         return 0;
 
-    int max_days = getMonthDays(d.month, d.year);
-    if (d.day < 1 || d.day > max_days)
+    if (year < 1900)
         return 0;
-       time_t now = time(NULL);
+
+    time_t now = time(NULL);
     struct tm *local = localtime(&now);
+    int current_month = local->tm_mon + 1;
     int current_year = local->tm_year + 1900;
 
-    if (d.year < 1900 || d.year > current_year)
+    if (year > current_year || (year == current_year && month > current_month))
         return 0;
 
     return 1;
 }
+
 
 void clear_input_buffer() {
     int ch;

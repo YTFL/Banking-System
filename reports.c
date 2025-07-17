@@ -205,7 +205,7 @@ void month_report() {
     struct tm *current_time = localtime(&now);
     int current_month = current_time->tm_mon + 1;
     int current_year = current_time->tm_year + 1900; 
-    while (1) {
+        while (1) {
         printf("Enter month (MM) or enter 0 to cancel: ");
         if (scanf("%d", &month) != 1) {
             printf("Invalid input. Please enter a number.\n");
@@ -213,14 +213,11 @@ void month_report() {
             continue;
         }
         clear_input_buffer();
+
         if (month == 0) {
             printf("Reports cancelled.\n");
             fclose(fp);
             return;
-        }
-        if (month < 1 || month > 12) {
-            printf("Invalid month. Please enter a value between 1 and 12.\n");
-            continue;
         }
 
         printf("Enter year (YYYY) or enter 0 to cancel: ");
@@ -229,25 +226,24 @@ void month_report() {
             clear_input_buffer();
             continue;
         }
+        clear_input_buffer();
+
         if (year == 0) {
             printf("Reports cancelled.\n");
             fclose(fp);
             return;
         }
-        if (year < 1900) {
-            printf("Invalid year. Please enter a year >= 1900.\n");
-            clear_input_buffer();
-            continue;
-        } 
-        if (year > current_year || (year == current_year && month > current_month)) {
-            printf("Entered date is in the future. Please try again.\n");
+
+        if (!is_valid_date(month, year)) {
+            printf("Invalid or future date. Please try again.\n");
             continue;
         }
 
         break;
     }
+
     
-    char name[20], address[50];
+    char name[21], address[51];
     return_name(acc_no, name);
     return_address(acc_no, address);
     printf("\nAccount Number : %ld\n", acc_no);

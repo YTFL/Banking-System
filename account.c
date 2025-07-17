@@ -55,6 +55,7 @@ void new_account(void)  {
     fclose(fp);
     
     if(dup) {
+        clear_input_buffer();
         while (1) {
             printf("\nConfirm to create new account? (Y/N): ");
             if (!fgets(confirm, sizeof(confirm), stdin)) {
@@ -65,8 +66,10 @@ void new_account(void)  {
             confirm[strcspn(confirm, "\n")] = '\0';
 
             if (strcasecmp(confirm, "Y") == 0) {
+                clear_input_buffer();
                 break;
             } else if (strcasecmp(confirm, "N") == 0) {
+                clear_input_buffer();
                 printf("Account creation cancelled.\n");
                 return;
             } else {
@@ -110,6 +113,7 @@ void new_account(void)  {
     printf("Address        : %s\n", acc.address);
     printf("Balance        : %.2lf\n", acc.balance/100.0);
 
+    clear_input_buffer();
     while (1) {
         printf("\nConfirm to create new account? (Y/N): ");
         if (!fgets(confirm, sizeof(confirm), stdin)) {
@@ -120,6 +124,7 @@ void new_account(void)  {
         confirm[strcspn(confirm, "\n")] = '\0';
 
         if (strcasecmp(confirm, "Y") == 0) {
+            clear_input_buffer();
             break;
         } else if (strcasecmp(confirm, "N") == 0) {
             printf("Account creation cancelled.\n");
@@ -288,6 +293,7 @@ void modify_account(int choice) {
     printf("Address        : %s\n", acc.address);
     printf("Balance        : %.2lf\n", acc.balance/100.0);
 
+    clear_input_buffer();
     char confirm[3];
     while (1) {
         printf("\nConfirm changes to account? (Y/N): ");
@@ -335,6 +341,7 @@ void delete_account() {
         }
     }
 
+    clear_input_buffer();
     char confirm[3];
     do {
         printf("\nConfirm to delete your account? (Y/N): ");
