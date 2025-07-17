@@ -13,7 +13,7 @@ void new_account(void)  {
     banking trans;
     time_t now = time(NULL);
     struct tm *local = localtime(&now);
-    char confirm;
+    char confirm[3];
 
     printf("\n----- Open New Account -----\n");
     acc.acc_no = last_accno() + 1;
@@ -66,6 +66,7 @@ void new_account(void)  {
     }
   
     initial copy;
+    
     int dup = 0;
     while (fread(&copy, sizeof(initial), 1, fp) == 1) {
         if (strcmp(copy.name, acc.name) == 0 && strcmp(copy.address, acc.address) == 0) 
@@ -81,20 +82,25 @@ void new_account(void)  {
     fclose(fp);
     
     if(dup) {
-        do {
-            printf("Do you still want to create a new account? (Y/N): ");
-            confirm = getchar();
-            while (getchar() != '\n');
+        while (1) {
+            printf("\nConfirm to create new account? (Y/N): ");
+            if (!fgets(confirm, sizeof(confirm), stdin)) {
+                printf("Input error.\n");
+                continue;
+            }
 
-            if (confirm == 'Y' || confirm == 'y') {
+            confirm[strcspn(confirm, "\n")] = '\0';
+
+            if (strcasecmp(confirm, "Y") == 0) {
                 break;
-            } else if (confirm == 'N' || confirm == 'n') {
+            } else if (strcasecmp(confirm, "N") == 0) {
                 printf("Account creation cancelled.\n");
                 return;
             } else {
                 printf("Invalid input. Please enter Y or N.\n");
+                clear_input_buffer();
             }
-        } while (1); 
+        }
     }
 
     char input[100];
@@ -122,7 +128,7 @@ void new_account(void)  {
             printf("The Minimum initial deposit is 500 and less than 1 Crore.\n");
         }
 
-    } while (paise < 500 || paise > MAX_AMOUNT);
+    } while (paise < 50000 || paise > MAX_AMOUNT);
     acc.balance = paise;
 
     printf("\nPlease review your details:\n");
@@ -131,20 +137,25 @@ void new_account(void)  {
     printf("Address        : %s\n", acc.address);
     printf("Balance        : %.2lf\n", acc.balance/100.0);
 
-    do {
-        printf("\nConfirm to create this account? (Y/N): ");
-        confirm = getchar();
-        clear_input_buffer();
+    while (1) {
+        printf("\nConfirm to create new account? (Y/N): ");
+        if (!fgets(confirm, sizeof(confirm), stdin)) {
+            printf("Input error.\n");
+            continue;
+        }
 
-        if (confirm == 'Y' || confirm == 'y') {
+        confirm[strcspn(confirm, "\n")] = '\0';
+
+        if (strcasecmp(confirm, "Y") == 0) {
             break;
-        } else if (confirm == 'N' || confirm == 'n') {
+        } else if (strcasecmp(confirm, "N") == 0) {
             printf("Account creation cancelled.\n");
             return;
         } else {
             printf("Invalid input. Please enter Y or N.\n");
+            clear_input_buffer();
         }
-    } while (1);
+    }
 
     add_to_file(acc);
 
@@ -330,37 +341,42 @@ void modify_account(int choice) {
     printf("Address        : %s\n", acc.address);
     printf("Balance        : %.2lf\n", acc.balance/100.0);
 
-    char confirm;
-    do {
-        printf("\nConfirm to make the changes to your account? (Y/N): ");
-        confirm = getchar();
-        clear_input_buffer();
+    char confirm[3];
+    while (1) {
+        printf("\nConfirm to create new account? (Y/N): ");
+        if (!fgets(confirm, sizeof(confirm), stdin)) {
+            printf("Input error.\n");
+            continue;
+        }
 
-        if (confirm == 'Y' || confirm == 'y') {
+        confirm[strcspn(confirm, "\n")] = '\0';
+
+        if (strcasecmp(confirm, "Y") == 0) {
             break;
-        } else if (confirm == 'N' || confirm == 'n') {
+        } else if (strcasecmp(confirm, "N") == 0) {
             printf("Account creation cancelled.\n");
             return;
         } else {
             printf("Invalid input. Please enter Y or N.\n");
+            clear_input_buffer();
         }
-    } while (1);
+    }
     modify(fp, pos, &acc);
     fclose(fp);
 }
 
 void delete_account() {
     long int acc_no;
-    FILE *fp = fopen("INITIAL.dat","rb");
-    if(fp == NULL) {
-        printf("Cannot open file");
+    FILE *fp = fopen("INITIAL.dat", "rb");
+    if (fp == NULL) {
+        printf("Cannot open file\n");
         return;
     }
 
     while (1) {
         printf("Enter account number or enter 0 to go back: ");
         scanf("%ld", &acc_no);
-        clear_input_buffer(); 
+        clear_input_buffer();
         if (found_account(fp, acc_no)) {
             break;
         } else if (acc_no == 0) {
@@ -368,45 +384,69 @@ void delete_account() {
             return;
         } else {
             printf("Account not found. Please try again.\n");
-            rewind(fp);  
+            rewind(fp);
         }
     }
 
-    char confirm;
+    char confirm[3];
     do {
         printf("\nConfirm to delete your account? (Y/N): ");
-        confirm = getchar();
-        clear_input_buffer();
+        fgets(confirm, sizeof(confirm), stdin);
+        if (strchr(confirm, '\n') == NULL) {
+            clear_input_buffer();
+        }
+        confirm[strcspn(confirm, "\n")] = '\0';
 
-        if (confirm == 'Y' || confirm == 'y') {
+        if (strcasecmp(confirm, "Y") == 0) {
             break;
-        } else if (confirm == 'N' || confirm == 'n') {
-            printf("Account creation cancelled.\n");
+        } else if (strcasecmp(confirm, "N") == 0) {
+            printf("Account deletion cancelled.\n");
+            fclose(fp);
             return;
         } else {
             printf("Invalid input. Please enter Y or N.\n");
         }
     } while (1);
+
     rewind(fp);
-    FILE *temp = fopen("temp.dat","wb");
+    FILE *temp = fopen("temp.dat", "wb");
     if (temp == NULL) {
-        printf("Cannot open file");
+        printf("Cannot open temp file\n");
         fclose(fp);
         return;
     }
-    
+
     initial acc;
-    while(fread(&acc, sizeof(acc), 1, fp)) {
-        if(acc.acc_no == acc_no) continue;
-        fwrite(&acc, sizeof(acc), 1 , temp);
-   }
-   fclose(fp);
-   fclose(temp);
-   remove("INITIAL.dat");
-   rename("temp.dat","INITIAL.dat");
-   close_account(acc_no);
-   printf("Account and associated transactions deleted successfully.\n");
+    int found = 0;
+    while (fread(&acc, sizeof(acc), 1, fp)) {
+        if (acc.acc_no == acc_no) {
+            if (acc.balance > 0) {
+                printf("Cannot delete account with balance. Please withdraw or transfer the balance first.\n");
+                fclose(fp);
+                fclose(temp);
+                remove("temp.dat");
+                return;
+            }
+            found = 1;
+            continue;
+        }
+        fwrite(&acc, sizeof(acc), 1, temp);
+    }
+
+    fclose(fp);
+    fclose(temp);
+
+    if (found) {
+        remove("INITIAL.dat");
+        rename("temp.dat", "INITIAL.dat");
+        close_account(acc_no);
+        printf("Account and associated transactions deleted successfully.\n");
+    } else {
+        remove("temp.dat");
+        printf("Account not found during deletion.\n");
+    }
 }
+
 
 void close_account(long int acc_no) {
     FILE *fp = fopen("BANKING.dat","rb");
