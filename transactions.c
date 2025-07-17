@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <ctype.h>
+#include <math.h>
 #include "structs.h"
 #include "transactions.h"
 #include "account.h"
@@ -22,7 +22,6 @@ void transaction() {
             printf("Error opening account file.\n");
             return;
         }
-        long int accno;
 
         while (1) {
             printf("Enter account number or enter 0 to go back: ");
@@ -30,7 +29,7 @@ void transaction() {
             clear_input_buffer(); 
             if (found_account(fp_initial, acc_no)) {
                 break;
-            } else if (accno == 0) {
+            } else if (acc_no == 0) {
                 fclose(fp_initial);
                 return;
             } else {
@@ -53,7 +52,7 @@ void transaction() {
     }
 
     printf("Account holder: %s\n", acc.name);
-    printf("Current balance: %.2f\n", acc.balance);
+    printf("Current balance: %.2f\n", acc.balance/100.0);
 
     // Confirm with Y/N loop
     char confirm;
@@ -75,17 +74,14 @@ void transaction() {
     while (1) {
         printf("Enter transaction type (Deposit / Withdraw) or 'cancel' to exit: ");
         scanf("%s", trans.trans);
-        while (getchar() != '\n');
+        clear_input_buffer();
 
-        for (int i = 0; trans.trans[i]; i++)
-            trans.trans[i] = tolower(trans.trans[i]);
-
-        if (strcmp(trans.trans, "cancel") == 0) {
+        if (strcasecmp(trans.trans, "cancel") == 0) {
             printf("Transaction cancelled.\n");
             return;
         }
 
-        if (strcmp(trans.trans, "withdraw") == 0 || strcmp(trans.trans, "deposit") == 0)
+        if (strcasecmp(trans.trans, "withdraw") == 0 || strcasecmp(trans.trans, "deposit") == 0)
             break;
 
         printf("Invalid transaction type. Please enter 'Deposit' or 'Withdraw'.\n");
@@ -95,17 +91,14 @@ void transaction() {
     while (1) {
         printf("Enter mode (cash / cheque) or 'cancel' to exit: ");
         scanf("%s", trans.type);
-        while (getchar() != '\n');
+        clear_input_buffer();
 
-        for (int i = 0; trans.type[i]; i++)
-            trans.type[i] = tolower(trans.type[i]);
-
-        if (strcmp(trans.type, "cancel") == 0) {
+        if (strcasecmp(trans.type, "cancel") == 0) {
             printf("Transaction cancelled.\n");
             return;
         }
 
-        if (strcmp(trans.type, "cash") == 0 || strcmp(trans.type, "cheque") == 0)
+        if (strcasecmp(trans.type, "cash") == 0 || strcasecmp(trans.type, "cheque") == 0)
             break;
 
         printf("Invalid mode. Please enter 'cash' or 'cheque'.\n");
@@ -117,18 +110,26 @@ void transaction() {
         printf("Enter transaction amount or 0 to cancel: ");
         if (scanf("%lf", &amount) != 1) {
             printf("Invalid input. Please enter a valid number.\n");
-            while (getchar() != '\n');
+            clear_input_buffer();
             continue;
         }
+
         if (amount == 0) {
             printf("Transaction cancelled.\n");
             return;
-        } else if (trans.amount <= 0 || trans.amount > MAX_AMOUNT) {
-            printf("Transaction amount must be greater than zero or less than one billion.\n");
-            continue;
         }
         
-    } while (trans.amount <= 0 || trans.amount > MAX_AMOUNT);
+        paise = (long long)round(amount * 100);
+
+        if (paise <= 0 || paise > MAX_AMOUNT) {
+            printf("Transaction amount must be greater than zero and less 1 Crore.\n");
+            continue;
+        }
+        trans.amount = paise;
+        break;
+
+    } while (1);
+
 
     clear_input_buffer();
     do {
@@ -157,28 +158,30 @@ void transaction() {
 
     // process
     if (strcmp(trans.trans, "withdraw") == 0) {
-        if (acc.balance <= 500) {
-            printf("Transaction rejected. Account balance is already at or below the minimum required balance of 500.\n");
-            return;
-        } else if (trans.amount > acc.balance) {
-            printf("Insufficient balance.\n");
-            return;
-        }
-        acc.balance -= trans.amount;
-    } else if (strcmp(trans.trans, "deposit") == 0) {
-        if ((acc.balance + trans.amount) > 999999999.99) {
-            printf("Transaction rejected. Deposit amount exceeds the maximum allowed balance of one billion.\n");
-            return;
-        }
+    if (acc.balance <= 50000) { 
+        printf("Transaction rejected. Account balance is already at or below the minimum required balance of 500.\n");
+        return;
+    } else if (trans.amount > acc.balance) {
+        printf("Insufficient balance.\n");
+        return;
     }
+    acc.balance -= trans.amount;
+
+    } else if (strcmp(trans.trans, "deposit") == 0) {
+        if ((acc.balance + trans.amount) > MAX_AMOUNT) {
+            printf("Transaction rejected. Deposit amount exceeds the maximum allowed balance of 1 Crore.\n");
+            return;
+        }
     acc.balance += trans.amount;
+    }
 
     trans.balance = acc.balance;
+
 
     update_balance(acc);
     add_to_file_transaction(trans);
 
-    printf("Transaction successful. Updated balance: %.2f\n", acc.balance);
+    printf("Transaction successful. Updated balance: %.2f\n", acc.balance/100.0);
 }
 
 void update_balance(initial acc) {
@@ -200,7 +203,7 @@ void update_balance(initial acc) {
 }
 
 float give_balance(long int acc_no) {
-    double balance = 0.0;
+    long long balance = 0;
     FILE *fp = fopen("INITIAL.dat", "rb");
     if (fp == NULL) {
         printf("Error opening INITIAL.dat\n");
@@ -229,4 +232,3 @@ void add_to_file_transaction(banking trans) {
     fwrite(&trans, sizeof(trans), 1, fp);
     fclose(fp);
 }
-

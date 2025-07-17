@@ -3,23 +3,11 @@
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
+#include <math.h>
 #include "structs.h"
 #include "util.h"
 #include "account.h"
 #include "reports.h"
-
-// Case-insensitive string compare (cross-platform)
-int equals_ignore_case(const char *a, const char *b)
-{
-    while (*a && *b)
-    {
-        if (tolower(*a) != tolower(*b))
-            return 0;
-        a++;
-        b++;
-    }
-    return *a == *b;
-}
 
 void display_account() {
     FILE *fp;
@@ -27,7 +15,7 @@ void display_account() {
     long int acc_no;
     int month, year;
     int found = 0;
-    float total_deposit = 0.0, total_withdraw = 0.0;
+    long long total_deposit = 0, total_withdraw = 0;
 
     fp = fopen("BANKING.dat", "rb");
     if (fp == NULL) {
@@ -74,7 +62,7 @@ void display_account() {
     }
 
     printf("Account holder: %s\n", acc.name);
-    printf("Current balance: %.2f\n", acc.balance);
+    printf("Current balance: %.2f\n", acc.balance/100.0);
 
     char confirm;
     do {
@@ -94,31 +82,28 @@ void display_account() {
     char name[20], address[50];
     return_name(acc_no, name);
     return_address(acc_no, address);
-    printf("\nAccount Number: %ld\n", acc_no);
-    printf("Account Holder: %s\n", name);
-    printf("Address: %s\n", address);
-    printf("Month: %02d, Year: %d\n", month, year);
-    printf("\n\t\t\t\t    MONTHLY STATEMENT\n");
+    printf("\nAccount Number : %ld\n", acc_no);
+    printf("Account Holder : %s\n", name);
+    printf("Address        : %s\n", address);
+    printf("\n\t\t\t\t TRANSACTIONS STATEMENT\n");
     box_for_display();
 
     while (fread(&t, sizeof(t), 1, fp)) {
-        if (t.acc_no == acc_no && t.date.month == month && t.date.year == year) {
-            found = 1;
+        if (t.acc_no != acc_no) continue;
+        found = 1;
 
-            float deposit_amt = 0.0, withdraw_amt = 0.0;
-            if (strcasecmp(t.trans, "Deposit") == 0)
-                deposit_amt = t.amount;
-            else if (strcasecmp(t.trans, "Withdraw") == 0)
-                withdraw_amt = t.amount;
+        long long deposit_amt = 0, withdraw_amt = 0;
+        if (strcasecmp(t.trans, "Deposit") == 0)
+            deposit_amt = t.amount;
+        else if (strcasecmp(t.trans, "Withdraw") == 0)
+            withdraw_amt = t.amount;
 
-            total_deposit += deposit_amt;
-            total_withdraw += withdraw_amt;
+        total_deposit += deposit_amt;
+        total_withdraw += withdraw_amt;
 
-            printf("| %02d-%02d-%04d | %-11s | %19.2lf | %19.2lf | %19.2lf |\n",
-                   t.date.day, t.date.month, t.date.year,
-                   t.type, deposit_amt, withdraw_amt, t.balance);
-            printf("+------------+-------------+---------------------+---------------------+---------------------+\n");
-        }
+       printf("| %02d-%02d-%04d | %-11s | %19.2lf | %19.2lf | %19.2lf |\n",
+            t.date.day, t.date.month, t.date.year, t.type, deposit_amt/100.0, withdraw_amt/100.0, t.balance/100.0);
+        printf("+------------+-------------+---------------------+---------------------+---------------------+\n");
     }
 
     if (!found) {
@@ -127,7 +112,7 @@ void display_account() {
 
     if (found) {
         printf("| %-24s | %19.2lf | %19.2lf | %19s |\n",
-               "Total", total_deposit, total_withdraw, "");
+               "Total", total_deposit/100.0, total_withdraw/100.0, "");
     }
     printf("+------------+-------------+---------------------+---------------------+---------------------+\n");
 
@@ -140,7 +125,7 @@ void month_report() {
     long int acc_no;
     int month, year;
     int found = 0;
-    float total_deposit = 0.0, total_withdraw = 0.0;
+    long long total_deposit = 0, total_withdraw = 0;
 
     fp = fopen("BANKING.dat", "rb");
     if (fp == NULL) {
@@ -227,7 +212,11 @@ void month_report() {
         }
 
         printf("Enter year (YYYY) or enter 0 to cancel: ");
-        scanf("%d", &year);
+        if (scanf("%d", &year) != 1) {
+            printf("Invalid input. Please enter a number.\n");
+            clear_input_buffer();
+            continue;
+        }
         if (year == 0) {
             printf("Reports cancelled.\n");
             fclose(fp);
@@ -249,10 +238,11 @@ void month_report() {
     char name[20], address[50];
     return_name(acc_no, name);
     return_address(acc_no, address);
-    printf("\nAccount Number: %ld\n", acc_no);
-    printf("Account Holder: %s\n", name);
-    printf("Address: %s\n", address);
-    printf("Month: %02d, Year: %d\n", month, year);
+    printf("\nAccount Number : %ld\n", acc_no);
+    printf("Account Holder : %s\n", name);
+    printf("Address        : %s\n", address);
+    printf("Month          : %02d\n", month);
+    printf("Year           : %02d\n", year);
     printf("\n\t\t\t\t    MONTHLY STATEMENT\n");
     box_for_display();
 
@@ -260,7 +250,7 @@ void month_report() {
         if (t.acc_no == acc_no && t.date.month == month && t.date.year == year) {
             found = 1;
 
-            float deposit_amt = 0.0, withdraw_amt = 0.0;
+            long long deposit_amt = 0, withdraw_amt = 0;
             if (strcasecmp(t.trans, "Deposit") == 0)
                 deposit_amt = t.amount;
             else if (strcasecmp(t.trans, "Withdraw") == 0)
@@ -270,8 +260,7 @@ void month_report() {
             total_withdraw += withdraw_amt;
 
             printf("| %02d-%02d-%04d | %-11s | %19.2lf | %19.2lf | %19.2lf |\n",
-                   t.date.day, t.date.month, t.date.year,
-                   t.type, deposit_amt, withdraw_amt, t.balance);
+                t.date.day, t.date.month, t.date.year, t.type, deposit_amt/100.0, withdraw_amt/100.0, t.balance/100.0);
             printf("+------------+-------------+---------------------+---------------------+---------------------+\n");
         }
     }
@@ -282,8 +271,9 @@ void month_report() {
 
     if (found) {
         printf("| %-24s | %19.2lf | %19.2lf | %19s |\n",
-               "Total", total_deposit, total_withdraw, "");
+               "Total", total_deposit/100.0, total_withdraw/100.0, "");
     }
+
     printf("+------------+-------------+---------------------+---------------------+---------------------+\n");
 
     fclose(fp);

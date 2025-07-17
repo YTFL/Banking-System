@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 #include "structs.h"
 #include "account.h"
 #include "transactions.h"
@@ -118,7 +119,7 @@ void new_account(void)  {
         paise = (long long)(round(amount * 100));
 
         if (paise < 50000 || paise > MAX_AMOUNT) {
-            printf("The Minimum initial deposit is 500 and less than 1 billion.\n");
+            printf("The Minimum initial deposit is 500 and less than 1 Crore.\n");
         }
 
     } while (paise < 500 || paise > MAX_AMOUNT);
@@ -128,7 +129,7 @@ void new_account(void)  {
     printf("Account Number : %ld\n", acc.acc_no);
     printf("Name           : %s\n", acc.name);
     printf("Address        : %s\n", acc.address);
-    printf("Balance        : %.2lf\n", acc.balance/100);
+    printf("Balance        : %.2lf\n", acc.balance/100.0);
 
     do {
         printf("\nConfirm to create this account? (Y/N): ");
@@ -161,8 +162,8 @@ void new_account(void)  {
 
     printf("\nAccount created successfully!\n");
     printf("Account Number : %ld\n", acc.acc_no);
-    printf("Balance        : %.2f\n", acc.balance);
-    printf("An initial transaction of %.2f has been added.\n", acc.balance);
+    printf("Balance        : %.2f\n", acc.balance/100.0);
+    printf("An initial transaction of %.2f has been added.\n", acc.balance/100.0);
 }
 
 
@@ -185,19 +186,19 @@ void display_list() {
     }
 
     initial acc;
-    double total_balance = 0 ;
+    long long total_balance = 0 ;
 
     printf("+====================+========================+======================================================+=====================+\n");
     printf("| %-18s | %-22s | %-52s | %-19s |\n", "Account Number", "Name", "Address", "Balance");
     printf("+====================+========================+======================================================+=====================+\n");
 
     while (fread(&acc, sizeof(initial), 1, fp) == 1) {
-        printf("| %-18ld | %-22s | %-52s | %19.2f |\n", acc.acc_no, acc.name, acc.address, acc.balance);
+        printf("| %-18ld | %-22s | %-52s | %19.2f |\n", acc.acc_no, acc.name, acc.address, acc.balance/100.0);
         printf("+--------------------+------------------------+------------------------------------------------------+---------------------+\n");
         total_balance += acc.balance;
     }
 
-    printf("| %-18s | %-22s | %-52s | %19.2f |\n", "", "", "Total Balance in Bank:", total_balance);
+    printf("| %-18s | %-22s | %-52s | %19.2f |\n", "", "", "Total Balance in Bank:", total_balance/100.0);
     printf("+--------------------+------------------------+------------------------------------------------------+---------------------+\n");
 
     fclose(fp);
@@ -233,7 +234,7 @@ void display() {
             printf("Account Number : %ld\n", acc.acc_no);
             printf("Name           : %s\n", acc.name);
             printf("Address        : %s\n", acc.address);
-            printf("Balance        : %.2f\n", acc.balance);
+            printf("Balance        : %.2f\n", acc.balance/100.0);
             break;
         }
     }
@@ -327,7 +328,7 @@ void modify_account(int choice) {
     printf("Account Number : %ld\n", acc.acc_no);
     printf("Name           : %s\n", acc.name);
     printf("Address        : %s\n", acc.address);
-    printf("Balance        : %.2lf\n", acc.balance);
+    printf("Balance        : %.2lf\n", acc.balance/100.0);
 
     char confirm;
     do {
