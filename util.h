@@ -10,5 +10,6 @@ int isEarlier(date d1, date d2);
 int is_valid_date(int month, int year);
 void clear_input_buffer();
 void get_input(char *output, int max_len, const char *prompt, const char *field_name);
+int get_valid_int(const char *prompt, int *output);
 
 #endif

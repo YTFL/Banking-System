@@ -142,3 +142,29 @@ void get_input(char *output, int max_len, const char *prompt, const char *field_
         }
     }
 }
+
+
+int get_valid_int(const char *prompt, int *output) {
+    char input[50];
+    char *endptr;
+
+    while (1) {
+        printf("%s", prompt);
+        if (!fgets(input, sizeof(input), stdin)) {
+            printf("Input error.\n");
+            return 0;
+        }
+
+        input[strcspn(input, "\n")] = '\0';
+
+        *output = (int)strtol(input, &endptr, 10);
+
+        if (endptr == input || *endptr != '\0') {
+            printf("Invalid input. Please enter a valid whole number.\n");
+            continue;
+        }
+
+        return 1;
+    }
+}
+

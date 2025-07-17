@@ -16,13 +16,9 @@ void main_menu(void) {
         printf("5. Transactions\n");
         printf("6. Clear Screen\n");
         printf("0. Exit\n");
-        printf("Select an option: ");
-        if (scanf("%d", &choice) != 1) {
-            printf("Invalid input. Please enter a number.\n");
-            clear_input_buffer();
-            continue;
-        }
-        getchar();
+
+        if (!get_valid_int("Select an option: ", &choice)) continue;
+
         switch (choice) {
             case 1:
                 new_account();
@@ -62,11 +58,9 @@ void edit_menu(void) {
         printf("4. Display Account Details\n");
         printf("0. Back to Main Menu\n");
         printf("Select an option: ");
-         if (scanf("%d", &choice) != 1) {
-            printf("Invalid input. Please enter a number.\n");
-            clear_input_buffer();
-            continue;
-        }
+        
+        if (!get_valid_int("Select an option: ", &choice)) continue;
+        
         switch (choice) {
             case 1:
             case 2:
@@ -95,11 +89,9 @@ void reports(void) {
         printf("2. Monthly Report\n");
         printf("0. Back to Main Menu\n");
         printf("Select an option: ");
-         if (scanf("%d", &choice) != 1) {
-            printf("Invalid input. Please enter a number.\n");
-            clear_input_buffer();
-            continue;
-        }
+         
+        if (!get_valid_int("Select an option: ", &choice)) continue;
+
         switch (choice) {
             case 1:
                 display_account();
