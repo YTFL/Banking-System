@@ -1,1 +1,0 @@
-2. getchar() used for Y/N input accepts full words like yes or no because only the first character is checked, making inputs like yes wrongly accepted. Fixed by switching to fgets() + strict length check.

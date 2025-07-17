@@ -64,19 +64,25 @@ void display_account() {
     printf("Account holder: %s\n", acc.name);
     printf("Current balance: %.2f\n", acc.balance/100.0);
 
-    char confirm;
-    do {
-        printf("\nProceed with this account? (Y/N): ");
-        confirm = getchar();
-        while (getchar() != '\n');
-        if (confirm != 'Y' && confirm != 'y' && confirm != 'N' && confirm != 'n') {
-            printf("Invalid input. Please enter Y or N.\n");
+    char confirm[3];
+    while (1) {
+        printf("\nContinue with this account? (Y/N): ");
+        if (!fgets(confirm, sizeof(confirm), stdin)) {
+            printf("Input error.\n");
+            continue;
         }
-    } while (confirm != 'Y' && confirm != 'y' && confirm != 'N' && confirm != 'n');
 
-    if (confirm == 'N' || confirm == 'n') {
-        printf("Reports cancelled.\n");
-        return;
+        confirm[strcspn(confirm, "\n")] = '\0';
+
+        if (strcasecmp(confirm, "Y") == 0) {
+            break;
+        } else if (strcasecmp(confirm, "N") == 0) {
+            printf("Reports generation cancelled.\n");
+            return;
+        } else {
+            printf("Invalid input. Please enter Y or N.\n");
+            clear_input_buffer();
+        }
     }
     
     char name[20], address[50];
@@ -172,21 +178,27 @@ void month_report() {
     }
 
     printf("Account holder: %s\n", acc.name);
-    printf("Current balance: %.2f\n", acc.balance);
+    printf("Current balance: %.2lf\n", acc.balance/100.0);
 
-    char confirm;
-    do {
-        printf("\nProceed with this account? (Y/N): ");
-        confirm = getchar();
-        while (getchar() != '\n');
-        if (confirm != 'Y' && confirm != 'y' && confirm != 'N' && confirm != 'n') {
-            printf("Invalid input. Please enter Y or N.\n");
+    char confirm[3];
+    while (1) {
+        printf("\nContinue with this account? (Y/N): ");
+        if (!fgets(confirm, sizeof(confirm), stdin)) {
+            printf("Input error.\n");
+            continue;
         }
-    } while (confirm != 'Y' && confirm != 'y' && confirm != 'N' && confirm != 'n');
 
-    if (confirm == 'N' || confirm == 'n') {
-        printf("Reports cancelled.\n");
-        return;
+        confirm[strcspn(confirm, "\n")] = '\0';
+
+        if (strcasecmp(confirm, "Y") == 0) {
+            break;
+        } else if (strcasecmp(confirm, "N") == 0) {
+            printf("Report generation cancelled.\n");
+            return;
+        } else {
+            printf("Invalid input. Please enter Y or N.\n");
+            clear_input_buffer();
+        }
     }
     
     time_t now = time(NULL);
