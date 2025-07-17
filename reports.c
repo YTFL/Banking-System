@@ -81,7 +81,7 @@ void display_account() {
             return;
         } else {
             printf("Invalid input. Please enter Y or N.\n");
-            clear_input_buffer();
+            clear_input_buffer(); 
         }
     }
     
