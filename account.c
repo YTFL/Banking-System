@@ -66,8 +66,7 @@ void new_account(void)  {
   
     initial copy;
     int dup = 0;
-    while (fread(&copy, sizeof(initial), 1, fp) == 1) 
-    {
+    while (fread(&copy, sizeof(initial), 1, fp) == 1) {
         if (strcmp(copy.name, acc.name) == 0 && strcmp(copy.address, acc.address) == 0) 
         {
             if(dup == 0)
@@ -80,30 +79,27 @@ void new_account(void)  {
     }
     fclose(fp);
     
-          if(dup)
-           {
-            do 
-            {
-                printf("Do you still want to create a new account? (Y/N): ");
-                confirm = getchar();
-                while (getchar() != '\n');
+    if(dup) {
+        do {
+            printf("Do you still want to create a new account? (Y/N): ");
+            confirm = getchar();
+            while (getchar() != '\n');
 
-                if (confirm == 'Y' || confirm == 'y')
-                {
-                    break;
-                } else if (confirm == 'N' || confirm == 'n')
-                {
-                    printf("Account creation cancelled.\n");
-                    return;
-                } else
-                {
-                    printf("Invalid input. Please enter Y or N.\n");
-                }
-            } while (1); 
-           }
+            if (confirm == 'Y' || confirm == 'y') {
+                break;
+            } else if (confirm == 'N' || confirm == 'n') {
+                printf("Account creation cancelled.\n");
+                return;
+            } else {
+                printf("Invalid input. Please enter Y or N.\n");
+            }
+        } while (1); 
+    }
 
     char input[100];
 
+    double amount;
+    long long paise;
     do {
         printf("Enter Initial deposit (>= 500): ");
 
@@ -114,22 +110,25 @@ void new_account(void)  {
 
         input[strcspn(input, "\n")] = '\0';
 
-        if (sscanf(input, "%lf", &acc.balance) != 1) {
+        if (sscanf(input, "%lf", &amount) != 1) {
             printf("Invalid input. Please enter a numeric value.\n");
             continue;
         }
 
-        if (acc.balance < 500 || acc.balance > 999999999.99) {
+        paise = (long long)(round(amount * 100));
+
+        if (paise < 50000 || paise > MAX_AMOUNT) {
             printf("The Minimum initial deposit is 500 and less than 1 billion.\n");
         }
 
-    } while (acc.balance < 500 || acc.balance > 999999999.99);
+    } while (paise < 500 || paise > MAX_AMOUNT);
+    acc.balance = paise;
 
     printf("\nPlease review your details:\n");
     printf("Account Number : %ld\n", acc.acc_no);
     printf("Name           : %s\n", acc.name);
     printf("Address        : %s\n", acc.address);
-    printf("Balance        : %.2lf\n", acc.balance);
+    printf("Balance        : %.2lf\n", acc.balance/100);
 
     do {
         printf("\nConfirm to create this account? (Y/N): ");

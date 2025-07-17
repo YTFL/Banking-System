@@ -111,22 +111,24 @@ void transaction() {
         printf("Invalid mode. Please enter 'cash' or 'cheque'.\n");
     }
 
-
+    double amount;
+    long long paise;
     do {
         printf("Enter transaction amount or 0 to cancel: ");
-        if (scanf("%f", &trans.amount) != 1) {
+        if (scanf("%lf", &amount) != 1) {
             printf("Invalid input. Please enter a valid number.\n");
             while (getchar() != '\n');
             continue;
         }
-        if (trans.amount == 0) {
+        if (amount == 0) {
             printf("Transaction cancelled.\n");
             return;
-        } else if (trans.amount < 0) {
-            printf("Transaction amount must be greater than or equal to zero.\n");
+        } else if (trans.amount <= 0 || trans.amount > MAX_AMOUNT) {
+            printf("Transaction amount must be greater than zero or less than one billion.\n");
+            continue;
         }
         
-    } while (trans.amount < 0);
+    } while (trans.amount <= 0 || trans.amount > MAX_AMOUNT);
 
     clear_input_buffer();
     do {
@@ -164,8 +166,12 @@ void transaction() {
         }
         acc.balance -= trans.amount;
     } else if (strcmp(trans.trans, "deposit") == 0) {
-        acc.balance += trans.amount;
+        if ((acc.balance + trans.amount) > 999999999.99) {
+            printf("Transaction rejected. Deposit amount exceeds the maximum allowed balance of one billion.\n");
+            return;
+        }
     }
+    acc.balance += trans.amount;
 
     trans.balance = acc.balance;
 
@@ -194,7 +200,7 @@ void update_balance(initial acc) {
 }
 
 float give_balance(long int acc_no) {
-    float balance = 0.0;
+    double balance = 0.0;
     FILE *fp = fopen("INITIAL.dat", "rb");
     if (fp == NULL) {
         printf("Error opening INITIAL.dat\n");

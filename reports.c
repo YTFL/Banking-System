@@ -25,6 +25,7 @@ void display_account() {
     FILE *fp;
     banking t;
     long int acc_no;
+    int month, year;
     int found = 0;
     float total_deposit = 0.0, total_withdraw = 0.0;
 
@@ -33,8 +34,7 @@ void display_account() {
         printf("Error: Cannot open BANKING.dat\n");
         return;
     }
-
-    long int accno;
+    
     initial acc;
     while (1) {
         FILE *fp_initial = fopen("INITIAL.dat", "rb");
@@ -42,19 +42,23 @@ void display_account() {
             printf("Error opening account file.\n");
             return;
         }
-
+        
         while (1) {
             printf("Enter account number or enter 0 to go back: ");
-            scanf("%ld", &acc_no);
-            clear_input_buffer();
+            if (scanf("%ld", &acc_no) != 1) {
+                printf("Invalid input. Please enter a number.\n");
+                clear_input_buffer();
+                continue;
+            }
+            clear_input_buffer(); 
             if (found_account(fp_initial, acc_no)) {
                 break;
-            } else if (accno == 0) {
+            } else if (acc_no == 0) {
                 fclose(fp_initial);
                 return;
             } else {
                 printf("Account not found. Please try again.\n");
-                rewind(fp_initial);
+                rewind(fp_initial);  
             }
         }
 
@@ -66,7 +70,7 @@ void display_account() {
         }
 
         fclose(fp_initial);
-        break;
+        break; 
     }
 
     printf("Account holder: %s\n", acc.name);
@@ -86,20 +90,19 @@ void display_account() {
         printf("Reports cancelled.\n");
         return;
     }
-
+    
     char name[20], address[50];
     return_name(acc_no, name);
     return_address(acc_no, address);
     printf("\nAccount Number: %ld\n", acc_no);
     printf("Account Holder: %s\n", name);
     printf("Address: %s\n", address);
-    printf("\n\t\t  TRANSACTION STATEMENT\n");
-    printf("+============+=============+==========+==========+==========+\n");
-    printf("| Date       | Particular  | Deposit  | Withdraw | Balance  |\n");
-    printf("+============+=============+==========+==========+==========+\n");
+    printf("Month: %02d, Year: %d\n", month, year);
+    printf("\n\t\t\t\t    MONTHLY STATEMENT\n");
+    box_for_display();
 
     while (fread(&t, sizeof(t), 1, fp)) {
-        if (t.acc_no == acc_no) {
+        if (t.acc_no == acc_no && t.date.month == month && t.date.year == year) {
             found = 1;
 
             float deposit_amt = 0.0, withdraw_amt = 0.0;
@@ -111,23 +114,22 @@ void display_account() {
             total_deposit += deposit_amt;
             total_withdraw += withdraw_amt;
 
-            printf("| %02d-%02d-%04d | %-11s | %8.2f | %8.2f | %8.2f |\n",
-                t.date.day, t.date.month, t.date.year,
-                t.type, deposit_amt, withdraw_amt, t.balance);
+            printf("| %02d-%02d-%04d | %-11s | %19.2lf | %19.2lf | %19.2lf |\n",
+                   t.date.day, t.date.month, t.date.year,
+                   t.type, deposit_amt, withdraw_amt, t.balance);
+            printf("+------------+-------------+---------------------+---------------------+---------------------+\n");
         }
     }
 
     if (!found) {
-        printf("| No transactions found for this account.                  |\n");
+        printf("| No transactions found for this account.                                                    |\n");
     }
-
-    printf("+------------+-------------+----------+----------+----------+\n");
 
     if (found) {
-        printf("| %-24s | %8.2f | %8.2f |          |\n",
-            "Total", total_deposit, total_withdraw);
-        printf("+------------+-------------+----------+----------+----------+\n");
+        printf("| %-24s | %19.2lf | %19.2lf | %19s |\n",
+               "Total", total_deposit, total_withdraw, "");
     }
+    printf("+------------+-------------+---------------------+---------------------+---------------------+\n");
 
     fclose(fp);
 }
@@ -146,7 +148,6 @@ void month_report() {
         return;
     }
     
-    long int accno;
     initial acc;
     while (1) {
         FILE *fp_initial = fopen("INITIAL.dat", "rb");
@@ -157,11 +158,15 @@ void month_report() {
         
         while (1) {
             printf("Enter account number or enter 0 to go back: ");
-            scanf("%ld", &acc_no);
+            if (scanf("%ld", &acc_no) != 1) {
+                printf("Invalid input. Please enter a number.\n");
+                clear_input_buffer();
+                continue;
+            }
             clear_input_buffer(); 
             if (found_account(fp_initial, acc_no)) {
                 break;
-            } else if (accno == 0) {
+            } else if (acc_no == 0) {
                 fclose(fp_initial);
                 return;
             } else {
@@ -205,8 +210,14 @@ void month_report() {
     int current_year = current_time->tm_year + 1900; 
     while (1) {
         printf("Enter month (MM) or enter 0 to cancel: ");
-        scanf("%d", &month);
+        if (scanf("%d", &month) != 1) {
+            printf("Invalid input. Please enter a number.\n");
+            clear_input_buffer();
+            continue;
+        }
+        clear_input_buffer();
         if (month == 0) {
+            printf("Reports cancelled.\n");
             fclose(fp);
             return;
         }
@@ -218,11 +229,13 @@ void month_report() {
         printf("Enter year (YYYY) or enter 0 to cancel: ");
         scanf("%d", &year);
         if (year == 0) {
+            printf("Reports cancelled.\n");
             fclose(fp);
             return;
         }
         if (year < 1900) {
             printf("Invalid year. Please enter a year >= 1900.\n");
+            clear_input_buffer();
             continue;
         } 
         if (year > current_year || (year == current_year && month > current_month)) {
@@ -240,10 +253,8 @@ void month_report() {
     printf("Account Holder: %s\n", name);
     printf("Address: %s\n", address);
     printf("Month: %02d, Year: %d\n", month, year);
-    printf("\n\t\t    MONTHLY STATEMENT\n");
-    printf("+============+=============+==========+==========+==========+\n");
-    printf("| Date       | Particular  | Deposit  | Withdraw | Balance  |\n");
-    printf("+============+=============+==========+==========+==========+\n");
+    printf("\n\t\t\t\t    MONTHLY STATEMENT\n");
+    box_for_display();
 
     while (fread(&t, sizeof(t), 1, fp)) {
         if (t.acc_no == acc_no && t.date.month == month && t.date.year == year) {
@@ -258,33 +269,31 @@ void month_report() {
             total_deposit += deposit_amt;
             total_withdraw += withdraw_amt;
 
-            printf("| %02d-%02d-%04d | %-11s | %8.2f | %8.2f | %8.2f |\n",
+            printf("| %02d-%02d-%04d | %-11s | %19.2lf | %19.2lf | %19.2lf |\n",
                    t.date.day, t.date.month, t.date.year,
                    t.type, deposit_amt, withdraw_amt, t.balance);
+            printf("+------------+-------------+---------------------+---------------------+---------------------+\n");
         }
     }
 
     if (!found) {
-        printf("| No transactions found for this account in %02d/%d.        |\n", month, year);
+        printf("| No transactions found for this account in %02d/%d.                                         |\n", month, year);
     }
-
-    printf("+------------+-------------+----------+----------+----------+\n");
 
     if (found) {
-        printf("| %-24s | %8.2f | %8.2f |          |\n",
-               "Total", total_deposit, total_withdraw);
-        printf("+------------+-------------+----------+----------+----------+\n");
+        printf("| %-24s | %19.2lf | %19.2lf | %19s |\n",
+               "Total", total_deposit, total_withdraw, "");
     }
+    printf("+------------+-------------+---------------------+---------------------+---------------------+\n");
 
     fclose(fp);
 }
 
 void box_for_display()
 {
-    printf("------------------------------------------------------------\n");
-    printf("%-10s  %-10s  %10s  %10s  %10s\n",
-           "Date", "Particular", "Deposit", "Withdraw", "Balance");
-    printf("------------------------------------------------------------\n");
+    printf("+============+=============+=====================+=====================+=====================+\n");
+    printf("| Date       | Particular  |      Deposit        |      Withdraw       |        Balance      |\n");
+    printf("+============+=============+=====================+=====================+=====================+\n");
 }
 
 void return_name(int accno, char *name_out)

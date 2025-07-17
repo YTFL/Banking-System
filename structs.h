@@ -5,7 +5,7 @@ typedef struct {
     long int acc_no;
     char name[21];     // 20 characters + 1 for '\0'
     char address[51];  // 50 characters + 1 for '\0'
-    double balance;
+    long long balance;
 } initial;
 
 
@@ -21,10 +21,9 @@ typedef struct {
     date date;
     char trans[20];
     float interest;
-    float amount;
-    float balance;
+    long long amount;
+    long long balance;
 } banking;
-
 
 
 #endif
