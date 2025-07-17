@@ -1,2 +1,2 @@
-1. No cancel option mid-function: Once a function starts for report, there's no way to go back without completing it.
-2. Name not being displayed in reports: The name of the customer is not being displayed in the reports.
+1. Account gets deleted even if balance is not zero: The system allows account deletion without checking if the user has withdrawn all money, which could result in loss of funds.
+2. getchar() used for Y/N input accepts full words like yes or no because only the first character is checked, making inputs like yes wrongly accepted. Fixed by switching to fgets() + strict length check.
