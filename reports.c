@@ -72,16 +72,19 @@ void display_account() {
             continue;
         }
 
-        confirm[strcspn(confirm, "\n")] = '\0';
+        if (strchr(confirm, '\n') == NULL) {
+            clear_input_buffer();
+        } else {
+            confirm[strcspn(confirm, "\n")] = '\0';
+        }
 
         if (strcasecmp(confirm, "Y") == 0) {
             break;
         } else if (strcasecmp(confirm, "N") == 0) {
-            printf("Reports generation cancelled.\n");
+            printf("Report generation cancelled.\n");
             return;
         } else {
             printf("Invalid input. Please enter Y or N.\n");
-            clear_input_buffer(); 
         }
     }
     
@@ -188,7 +191,11 @@ void month_report() {
             continue;
         }
 
-        confirm[strcspn(confirm, "\n")] = '\0';
+        if (strchr(confirm, '\n') == NULL) {
+            clear_input_buffer();
+        } else {
+            confirm[strcspn(confirm, "\n")] = '\0';
+        }
 
         if (strcasecmp(confirm, "Y") == 0) {
             break;
@@ -197,7 +204,6 @@ void month_report() {
             return;
         } else {
             printf("Invalid input. Please enter Y or N.\n");
-            clear_input_buffer();
         }
     }
     

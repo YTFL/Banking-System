@@ -55,28 +55,29 @@ void new_account(void)  {
     fclose(fp);
     
     if(dup) {
-        clear_input_buffer();
         while (1) {
-            printf("\nConfirm to create new account? (Y/N): ");
-            if (!fgets(confirm, sizeof(confirm), stdin)) {
-                printf("Input error.\n");
-                continue;
-            }
-
-            confirm[strcspn(confirm, "\n")] = '\0';
-
-            if (strcasecmp(confirm, "Y") == 0) {
-                clear_input_buffer();
-                break;
-            } else if (strcasecmp(confirm, "N") == 0) {
-                clear_input_buffer();
-                printf("Account creation cancelled.\n");
-                return;
-            } else {
-                printf("Invalid input. Please enter Y or N.\n");
-                clear_input_buffer();
-            }
+        printf("\nConfirm to create duplicate account? (Y/N): ");
+        if (!fgets(confirm, sizeof(confirm), stdin)) {
+            printf("Input error.\n");
+            continue;
         }
+
+        if (strchr(confirm, '\n') == NULL) {
+            clear_input_buffer();
+        } else {
+            confirm[strcspn(confirm, "\n")] = '\0';
+        }
+
+        if (strcasecmp(confirm, "Y") == 0) {
+            break;
+        } else if (strcasecmp(confirm, "N") == 0) {
+            printf("Account creation cancelled.\n");
+            return;
+        } else {
+            printf("Invalid input. Please enter Y or N.\n");
+        }
+    }
+
     }
 
     char input[100];
@@ -113,7 +114,6 @@ void new_account(void)  {
     printf("Address        : %s\n", acc.address);
     printf("Balance        : %.2lf\n", acc.balance/100.0);
 
-    clear_input_buffer();
     while (1) {
         printf("\nConfirm to create new account? (Y/N): ");
         if (!fgets(confirm, sizeof(confirm), stdin)) {
@@ -121,17 +121,19 @@ void new_account(void)  {
             continue;
         }
 
-        confirm[strcspn(confirm, "\n")] = '\0';
+        if (strchr(confirm, '\n') == NULL) {
+            clear_input_buffer();
+        } else {
+            confirm[strcspn(confirm, "\n")] = '\0';
+        }
 
         if (strcasecmp(confirm, "Y") == 0) {
-            clear_input_buffer();
             break;
         } else if (strcasecmp(confirm, "N") == 0) {
             printf("Account creation cancelled.\n");
             return;
         } else {
             printf("Invalid input. Please enter Y or N.\n");
-            clear_input_buffer();
         }
     }
 
@@ -293,25 +295,27 @@ void modify_account(int choice) {
     printf("Address        : %s\n", acc.address);
     printf("Balance        : %.2lf\n", acc.balance/100.0);
 
-    clear_input_buffer();
     char confirm[3];
     while (1) {
-        printf("\nConfirm changes to account? (Y/N): ");
+        printf("\nConfirm changes in your account? (Y/N): ");
         if (!fgets(confirm, sizeof(confirm), stdin)) {
             printf("Input error.\n");
             continue;
         }
 
-        confirm[strcspn(confirm, "\n")] = '\0';
+        if (strchr(confirm, '\n') == NULL) {
+            clear_input_buffer();
+        } else {
+            confirm[strcspn(confirm, "\n")] = '\0';
+        }
 
         if (strcasecmp(confirm, "Y") == 0) {
             break;
         } else if (strcasecmp(confirm, "N") == 0) {
-            printf("Account details change cancelled.\n");
+            printf("Changes discarded.\n");
             return;
         } else {
             printf("Invalid input. Please enter Y or N.\n");
-            clear_input_buffer();
         }
     }
     modify(fp, pos, &acc);
@@ -341,26 +345,29 @@ void delete_account() {
         }
     }
 
-    clear_input_buffer();
     char confirm[3];
-    do {
+    while (1) {
         printf("\nConfirm to delete your account? (Y/N): ");
-        fgets(confirm, sizeof(confirm), stdin);
+        if (!fgets(confirm, sizeof(confirm), stdin)) {
+            printf("Input error.\n");
+            continue;
+        }
+
         if (strchr(confirm, '\n') == NULL) {
             clear_input_buffer();
+        } else {
+            confirm[strcspn(confirm, "\n")] = '\0';
         }
-        confirm[strcspn(confirm, "\n")] = '\0';
 
         if (strcasecmp(confirm, "Y") == 0) {
             break;
         } else if (strcasecmp(confirm, "N") == 0) {
             printf("Account deletion cancelled.\n");
-            fclose(fp);
             return;
         } else {
             printf("Invalid input. Please enter Y or N.\n");
         }
-    } while (1);
+    }
 
     rewind(fp);
     FILE *temp = fopen("temp.dat", "wb");

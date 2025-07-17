@@ -37,8 +37,6 @@ void transaction() {
             }
         }
 
-
-        // load the account details
         rewind(fp_initial);
         while (fread(&acc, sizeof(acc), 1, fp_initial)) {
             if (acc.acc_no == acc_no) {
@@ -53,7 +51,6 @@ void transaction() {
     printf("Account holder: %s\n", acc.name);
     printf("Current balance: %.2f\n", acc.balance/100.0);
 
-    clear_input_buffer();
     char confirm[3];
     while (1) {
         printf("\nContinue with this account? (Y/N): ");
@@ -62,7 +59,11 @@ void transaction() {
             continue;
         }
 
-        confirm[strcspn(confirm, "\n")] = '\0';
+        if (strchr(confirm, '\n') == NULL) {
+            clear_input_buffer();
+        } else {
+            confirm[strcspn(confirm, "\n")] = '\0';
+        }
 
         if (strcasecmp(confirm, "Y") == 0) {
             break;
@@ -71,11 +72,9 @@ void transaction() {
             return;
         } else {
             printf("Invalid input. Please enter Y or N.\n");
-            clear_input_buffer();
         }
     }
 
-    // transaction type loop
     while (1) {
         printf("Enter transaction type (Deposit / Withdraw) or 'cancel' to exit: ");
         scanf("%s", trans.trans);
@@ -137,13 +136,17 @@ void transaction() {
 
     clear_input_buffer();
     while (1) {
-        printf("\nProceed with the transaction? (Y/N): ");
+        printf("\nContinue with this transaction? (Y/N): ");
         if (!fgets(confirm, sizeof(confirm), stdin)) {
             printf("Input error.\n");
             continue;
         }
 
-        confirm[strcspn(confirm, "\n")] = '\0';
+        if (strchr(confirm, '\n') == NULL) {
+            clear_input_buffer();
+        } else {
+            confirm[strcspn(confirm, "\n")] = '\0';
+        }
 
         if (strcasecmp(confirm, "Y") == 0) {
             break;
@@ -152,11 +155,9 @@ void transaction() {
             return;
         } else {
             printf("Invalid input. Please enter Y or N.\n");
-            clear_input_buffer();
         }
     }
 
-    // fill date
     time_t now = time(NULL);
     struct tm *local = localtime(&now);
     trans.date.day = local->tm_mday;
