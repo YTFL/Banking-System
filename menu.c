@@ -88,7 +88,6 @@ void reports(void) {
         printf("1. Lifetime Report\n");
         printf("2. Monthly Report\n");
         printf("0. Back to Main Menu\n");
-        printf("Select an option: ");
          
         if (!get_valid_int("Select an option: ", &choice)) continue;
 
