@@ -13,7 +13,7 @@ void main_menu(void) {
         printf("2. Display Account List\n");
         printf("3. Reports\n");
         printf("4. Edit Menu\n");
-        printf("5. Transactions\n");
+        printf("5. Make a Transaction\n");
         printf("6. Clear Screen\n");
         printf("0. Exit\n");
 
