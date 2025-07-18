@@ -3,6 +3,7 @@
 #include <string.h>
 #include <time.h>
 #include <math.h>
+#include <ctype.h>
 #include "structs.h"
 #include "transactions.h"
 #include "account.h"
@@ -114,7 +115,7 @@ void transaction() {
 
     do {
         printf("Enter transaction amount or 0 to cancel: ");
-        
+
         if (!fgets(input, sizeof(input), stdin)) {
             printf("Error reading input.\n");
             continue;
@@ -122,23 +123,33 @@ void transaction() {
 
         input[strcspn(input, "\n")] = '\0';
 
-        if (strcasecmp(input, "0") == 0 || strcasecmp(input, "0.00") == 0) {
+        if (strcmp(input, "0") == 0 || strcmp(input, "0.00") == 0) {
             printf("Transaction cancelled.\n");
             return;
         }
 
-        if (sscanf(input, "%lf", &amount) != 1) {
-            printf("Invalid input. Please enter a valid number.\n");
+        int valid = 1, dot_seen = 0, decimals = 0;
+        for (int i = 0; input[i]; ++i) {
+            if (isdigit(input[i])) {
+                if (dot_seen) decimals++;
+            } else if (input[i] == '.') {
+                if (dot_seen) {
+                    valid = 0;
+                    break;
+                }
+                dot_seen = 1;
+            } else {
+                valid = 0;
+                break;
+            }
+        }
+
+        if (!valid || decimals > 2) {
+            printf("Invalid input. Please enter a valid number with at most two decimal places.\n");
             continue;
         }
 
-        char *dot = strchr(input, '.');
-        if (dot != NULL && strlen(dot + 1) > 2) {
-            dot[3] = '\0';
-            printf("Invalid input. Please enter a value with at most two decimal places.\n");
-            continue;
-        }
-
+        amount = strtod(input, NULL);
         paise = (long long)(amount * 100);
 
         if (paise <= 0 || paise > MAX_AMOUNT) {
@@ -150,6 +161,7 @@ void transaction() {
         break;
 
     } while (1);
+
 
 
     while (1) {

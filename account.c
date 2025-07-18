@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <ctype.h>
 #include "structs.h"
 #include "account.h"
 #include "transactions.h"
@@ -94,18 +95,30 @@ void new_account(void)  {
 
         input[strcspn(input, "\n")] = '\0';
 
-        if (sscanf(input, "%lf", &amount) != 1) {
-            printf("Invalid input. Please enter a numeric value.\n");
+
+        int valid = 1, dot_seen = 0, decimals = 0;
+        for (int i = 0; input[i]; ++i) {
+            if (isdigit(input[i])) {
+                if (dot_seen) decimals++;
+            } else if (input[i] == '.') {
+                if (dot_seen) {
+                    valid = 0; 
+                    break;
+                }
+                dot_seen = 1;
+            } else {
+                valid = 0; 
+                break;
+            }
+        }
+
+        if (!valid || decimals > 2) {
+            printf("Invalid input. Only numeric values with up to two decimal places are allowed.\n");
             continue;
         }
 
-        char *dot = strchr(input, '.');
-        if (dot != NULL && strlen(dot + 1) > 2) {
-            dot[3] = '\0';
-            printf("Invalid input. Please enter a value with at most two decimal places.\n");
-            continue;;
-        }
-
+    
+        amount = strtod(input, NULL);
         paise = (long long)(amount * 100);
 
         if (paise < 50000 || paise > MAX_AMOUNT) {
@@ -113,6 +126,7 @@ void new_account(void)  {
         }
 
     } while (paise < 50000 || paise > MAX_AMOUNT);
+
 
     acc.balance = paise;
 
