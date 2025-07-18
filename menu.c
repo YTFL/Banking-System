@@ -57,7 +57,6 @@ void edit_menu(void) {
         printf("3. Delete Account\n");
         printf("4. Display Account Details\n");
         printf("0. Back to Main Menu\n");
-        printf("Select an option: ");
         
         if (!get_valid_int("Select an option: ", &choice)) continue;
         
