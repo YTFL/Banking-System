@@ -53,7 +53,7 @@ A file-based, menu-driven banking system project developed in C as part of an ac
 - Console clearing: `system("cls")` (Windows only)
 
 ---
- To build and use the project use:
+ To compile and build the project, use:
  ```bash
  gcc main.c menu.c account.c reports.c transactions.c util.c -o banking_system -lm
 ```
@@ -67,6 +67,18 @@ A file-based, menu-driven banking system project developed in C as part of an ac
 - All modifications, deletions, and transactions are reflected in binary files.
 - Modular functions help organize code cleanly and logically.
 - Uses system("cls") for screen clearing (Windows only).
+
+---
+
+## Testing Documentation and Known Issues
+All test cases, validation checks, and known issues (bugs, limitations, edge cases) are documented in the testing report linked below.
+[BankingSystem_TestingDocumentation](https://docs.google.com/spreadsheets/d/1qDCoJd-bLsNjO8sg1TkAqTwn_imdBhK9NAa8JJjgcCY/edit?usp=sharing)
+
+---
+
+## Possible Features and Improvements
+- Prevent truncation of name/address during storage — allow full-length storage but truncate only for display.
+- Add a feature to support account-to-account fund transfers with proper validation.
 
 ---
 
