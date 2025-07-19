@@ -82,8 +82,17 @@ All test cases, validation checks, and known issues (bugs, limitations, edge cas
 
 ---
 
- ## Usage
+## Usage
+
 This project was developed as part of an academic requirement at **REVA University**, under the guidance of **Dr. Ramaprasad H C**.
-It is provided strictly for **educational and learning purposes only**.
-Although it is publicly viewable (like many open-source projects), it is **not** licensed under MIT or any other open-source license.
-You are **not permitted** to copy, reuse, modify, distribute, or publish this project or its code for commercial, academic, or public use without explicit permission from the authors.
+
+It is provided strictly for **academic and educational purposes only**.
+
+You may **view**, **fork**, and **improve** this project **for academic learning or evaluation**.  
+However, **you are not permitted** to use, copy, modify, distribute, or publish this project or its code for **commercial, public, or non-academic** use without explicit permission from the authors.
+
+**Pull Requests are Welcome**  
+Contributions that enhance or improve the project (especially for academic learning) are appreciated.  
+If your pull request is accepted, you will be **credited appropriately** in README.md under a separate tab.
+
+
