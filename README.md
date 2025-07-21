@@ -92,7 +92,4 @@ You may **view**, **fork**, and **improve** this project **for academic learning
 However, **you are not permitted** to use, copy, modify, distribute, or publish this project or its code for **commercial, public, or non-academic** use without explicit permission from the authors.
 
 **Pull Requests are Welcome**  
-Contributions that enhance or improve the project (especially for academic learning) are appreciated.  
-If your pull request is accepted, you will be **credited appropriately** in README.md under a separate tab.
-
-
+Contributions that enhance or improve the project (especially for academic learning) are appreciated.
