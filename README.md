@@ -79,6 +79,7 @@ All test cases, validation checks, and known issues (bugs, limitations, edge cas
 ## Possible Features and Improvements
 - Prevent truncation of name/address during storage — allow full-length storage but truncate only for display.
 - Add a feature to support account-to-account fund transfers with proper validation.
+- Add a QoL for direct withdrawals or account transfers when deleting account even when the balance is minimum or below minimum.
 
 ---
 
